@@ -62,7 +62,6 @@ class MenuUpdate(BaseModel):
     image_url: Optional[str]
     price: Optional[float]
     stock: Optional[int]  # 更新库存信息
-
     class Config:
         orm_mode = True
 
@@ -75,6 +74,7 @@ class OrderUpdate(BaseModel):
 
 # 创建菜单
 class MenuCreate(BaseModel):
+    id: UUID
     name: str
     image_url: Optional[str]
     price: float
@@ -107,7 +107,7 @@ class OrderResponse(BaseModel):
         orm_mode = True  # 确保支持 ORM 查询结果转换为响应模型
 
 # 新增库存模型
-class Instock(BaseModel):
+class InstockResponse(BaseModel):
     menu_id: UUID  # 外键：菜单 ID
     stock_quantity: int  # 库存数量
 
@@ -116,6 +116,17 @@ class Instock(BaseModel):
 
 class InstockUpdate(BaseModel):
     stock_quantity: int
+
+    class Config:
+        orm_mode = True
+
+
+class MenuWithStock(BaseModel):
+    id: UUID
+    name: str
+    image_url: Optional[str]
+    price: float
+    stock: int  # Include the stock field in the response model
 
     class Config:
         orm_mode = True

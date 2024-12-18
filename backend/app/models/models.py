@@ -20,24 +20,29 @@ class Biz(Base):
     hashed_password = Column(String, nullable=False)
     orders = relationship("Order", back_populates="biz")
     menus = relationship("Menu", back_populates="biz")
-
+    
 class Menu(Base):
     __tablename__ = "menus_table"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    name = Column(String, nullable=False)
-    image_url = Column(String)
-    price = Column(Float, nullable=False)
-    biz_id = Column(UUID, ForeignKey("biz_table.id"))
 
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)  # 使用 UUID 作为主键
+    name = Column(String, nullable=False)  # 菜单名称
+    image_url = Column(String)  # 图片链接
+    price = Column(Float, nullable=False)  # 食物价格
+
+    biz_id = Column(UUID(as_uuid=True), ForeignKey("biz_table.id"))  # 企业ID
     biz = relationship("Biz", back_populates="menus")
-    instock = relationship("Instock", back_populates="menu", uselist=False)  # 与库存表一对一关联
-    
-# 库存表
+
+    # 通过 instocks 关联库存信息
+    instock = relationship("Instock", back_populates="menu", uselist=False)  # 一对一关系
+
 class Instock(Base):
     __tablename__ = "instock_table"
-    menu_id = Column(UUID, ForeignKey("menus_table.id"), primary_key=True)
-    stock_quantity = Column(Integer, nullable=False)
+
+    id = Column(Integer, primary_key=True, index=True)
+    menu_id = Column(UUID(as_uuid=True), ForeignKey("menus_table.id"), unique=True)  # 一对一关系，关联 Menu ID
+    stock_quantity = Column(Integer, default=0)  # 库存数量
+
+    # 与 Menu 的一对一关系
     menu = relationship("Menu", back_populates="instock")
 
 # 订单表
@@ -46,9 +51,9 @@ class Order(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     state = Column(String, nullable=False, default="pending")
     quantity = Column(Integer, nullable=False)
-    user_id = Column(UUID, ForeignKey("users_table.id"))
-    biz_id = Column(UUID, ForeignKey("biz_table.id"))
-    menu_id = Column(UUID, ForeignKey("menus_table.id"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users_table.id"))
+    biz_id = Column(UUID(as_uuid=True), ForeignKey("biz_table.id"))
+    menu_id = Column(UUID(as_uuid=True), ForeignKey("menus_table.id"))
     user = relationship("User", back_populates="orders")
     biz = relationship("Biz", back_populates="orders")
     menu = relationship("Menu")

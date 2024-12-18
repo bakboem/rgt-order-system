@@ -48,7 +48,7 @@ def get_current_biz_user(token: str = Depends(oauth2_scheme), db: Session = Depe
         biz = db.query(Biz).filter(Biz.biz_name == biz_name).first()
         if not biz:
             raise HTTPException(status_code=404, detail="Enterprise user not found")
-        return BizToken(id=biz.id, biz_name=biz.biz_name, role=role)
+        return BizToken(id=str(biz.id), biz_name=biz.biz_name, role=role)
     except JWTError as e:
         print(f"JWTError: {str(e)}")  # 打印异常信息
         raise HTTPException(status_code=401, detail="Invalid token")
