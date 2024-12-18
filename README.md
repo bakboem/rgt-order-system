@@ -1,0 +1,1 @@
+##This is a skill test question before an interview, from RGT company
