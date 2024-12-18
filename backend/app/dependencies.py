@@ -38,8 +38,8 @@ def get_current_biz_user(token: str = Depends(oauth2_scheme), db: Session = Depe
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         biz_name = payload.get("sub")
         role = payload.get("role")
-        if role != "enterprise":
-            raise HTTPException(status_code=403, detail="Unauthorized for this endpoint")
+        if role != "biz":
+            raise HTTPException(status_code=403, detail="Unauthorized for this endpoint for Biz")
         biz = db.query(Biz).filter(Biz.biz_name == biz_name).first()
         if not biz:
             raise HTTPException(status_code=404, detail="Enterprise user not found")
