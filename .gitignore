@@ -6,3 +6,6 @@ terraform.tfstate.backup
 
 *.log
 
+backend/venv/
+backend/__pycache__/
+*.pyc

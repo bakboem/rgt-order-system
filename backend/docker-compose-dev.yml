@@ -1,0 +1,37 @@
+services:
+  postgresql:
+    build: ./db
+    container_name: postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data-dev:/var/lib/postgresql/data
+    env_file:
+      - ./db/.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rgt-user -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  # authserver:
+  #   image: surginus/hospital_auth
+  #   container_name: authserver
+  #   ports:
+  #     - "5001:5000"
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: "localhost:24224"
+  #       tag: authserver
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+volumes:
+  postgresql-data-dev:
+networks:
+  default:
+    driver: bridge

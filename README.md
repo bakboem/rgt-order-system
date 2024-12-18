@@ -2,19 +2,19 @@
 
 
 #  Order Management System
-This is a full-stack order management system built with React for the frontend and FastAPI for the backend. The system supports both user and enterprise roles, enabling real-time order updates using WebSocket and providing essential RESTful API services.
+This is a full-stack order management system built with React for the frontend and FastAPI for the backend. The system supports both user and business roles, enabling real-time order updates using WebSocket and providing essential RESTful API services.
 
 
 
 ## User Features
 - User login with **JWT-based authentication**
-- View the menu of food items from different enterprises.
+- View the menu of food items from different businesss.
 - Place orders with a specified quantity and submit them to the backend.
 - Real-time order tracking via **WebSocket**, with live updates on status
 - Ability to cancel orders that have not yet been accepted.
 
-## Enterprise Features
-- Enterprise login with **JWT-based authentication**
+## Biz Features
+- Biz login with **JWT-based authentication**
 - View all incoming orders and their statuses (e.g., pending, accepted, processing, completed).
 - Accept and update order statuses with a single click.
 - Real-time notifications for new orders through WebSocket subscriptions.
@@ -23,10 +23,10 @@ This is a full-stack order management system built with React for the frontend a
 ## Backend Features
 - RESTful API implementation for core functionalities：
   - /user_login: User authentication
-  - /enterprise_login: Enterprise authentication.
+  - /business_login: Biz authentication.
   - /order: Place a new order with validation.
   - /cancel_order: Cancel pending orders.
-  - /get_orders: Retrieve orders for a specific enterprise.
+  - /get_orders: Retrieve orders for a specific business.
   - /set-menu-and-instore: Update menus and inventory.
 - WebSocket server for full-duplex real-time messaging.
 - Simulated kitchen automation to process orders:
@@ -44,7 +44,7 @@ The backend uses in-memory data storage with the following structures:
   "u_password": "encrypted"
 }
 ```
-### Enterprise Table:
+### Biz Table:
 ```
 {
   "e_id": "UUID",
