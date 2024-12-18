@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Body
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
-from app.models.models import Instock, Menu
-from app.schemas.schemas import MenuCreate, MenuUpdate,BizToken,InstockUpdate, MenuResponse,MenuWithStock
+from app.models.models import Instock, Menu,Order,SaleTracking
+from app.schemas.schemas import MenuCreate, MenuUpdate,BizToken,InstockUpdate, MenuResponse,MenuWithStock,StockUpdateRequest
 from app.dependencies import get_current_biz_user  
 from uuid import UUID
+from datetime import datetime
 router = APIRouter()
 
 def get_db():
@@ -17,7 +18,7 @@ def get_db():
 # 获取当前企业的所有菜单
 @router.get("/all", response_model=list[MenuWithStock])
 def get_all_menus(db: Session = Depends(get_db)):
-    menus = db.query(Menu).all()
+    menus = db.query(Menu).filter(Menu.status == "available").all()
     # Get stock for each menu from the Instock table
     response = []
     for menu in menus:
@@ -27,6 +28,7 @@ def get_all_menus(db: Session = Depends(get_db)):
             name=menu.name,
             image_url=menu.image_url,
             price=menu.price,
+            status = menu.status,
             stock=stock.stock_quantity if stock else 0  # If no stock record, return 0
         ))
     return response
@@ -60,7 +62,8 @@ def add_menu(menu: MenuCreate, db: Session = Depends(get_db), current_user: BizT
         name=new_menu.name,
         image_url=new_menu.image_url,
         price=new_menu.price,
-        stock=instock.stock_quantity
+        stock=instock.stock_quantity,
+        status=new_menu.status
     )
 
 
@@ -81,22 +84,38 @@ def update_menu(menu_id: UUID, menu: MenuUpdate, db: Session = Depends(get_db), 
     return existing_menu
 
 
-
-@router.put("/setStock/{menu_id}", response_model=InstockUpdate)
-def set_stock(menu_id: UUID, stock_data: InstockUpdate, db: Session = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
-    # 查找菜单的库存记录，确保是当前企业用户管理的菜单
-    instock = db.query(Instock).filter(Instock.menu_id == menu_id).first()
-    
-    if not instock:
-        raise HTTPException(status_code=404, detail="Stock information not found for menu id")
-
+# 更新库存的路由
+@router.post("/update/stock/{menu_id}", response_model=InstockUpdate)
+def update_stock(menu_id: UUID, stock_update: StockUpdateRequest = Body(...), db: Session = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
+    # 查找菜单
     menu = db.query(Menu).filter(Menu.id == menu_id).first()
+    if not menu:
+        raise HTTPException(status_code=404, detail=f"Menu with id {menu_id} not found")
+    
+    # 确保当前用户是该菜单的拥有者
     if menu.biz_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You are not authorized to update stock for this menu")
+        raise HTTPException(status_code=403, detail="You are not authorized to update this menu's stock")
+    
+    # 查找库存
+    instock = db.query(Instock).filter(Instock.menu_id == menu_id).first()
+    if not instock:
+        raise HTTPException(status_code=404, detail=f"Instock record for menu {menu_id} not found")
 
-    # 更新库存数量
-    instock.stock_quantity = stock_data.stock_quantity
+    # 更新库存
+    instock.stock_quantity += stock_update.quantity  # 增加库存
+
+    # 记录销售到 SaleTracking 表
+    sale_record = SaleTracking(
+        menu_id=menu.id,
+        quantity=stock_update.quantity,
+        timestamp=datetime.utcnow()
+    )
+    db.add(sale_record)
+
+    # 提交数据库更改
     db.commit()
+
+    # 返回更新后的库存信息
     db.refresh(instock)
     return instock
 
@@ -110,3 +129,25 @@ def get_stock_by_menu(menu_id: UUID, db: Session = Depends(get_db)):
     
     # 返回库存数量
     return instock.stock_quantity
+@router.delete("/menu/delete/{menu_id}", response_model=dict)
+def delete_menu(menu_id: UUID, db: Session = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
+    # 查询菜单
+    menu = db.query(Menu).filter(Menu.id == menu_id).first()
+
+    if not menu:
+        raise HTTPException(status_code=404, detail=f"Menu with id {menu_id} not found")
+    
+    # 检查当前用户是否是该菜单的拥有者
+    if menu.biz_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You are not authorized to delete this menu")
+    
+    # 检查是否有任何状态为 "pending" 的订单
+    pending_orders = db.query(Order).filter(Order.menu_id == menu_id, Order.state == "pending").all()
+    if pending_orders:
+        raise HTTPException(status_code=400, detail=f"Cannot deactivate menu with id {menu_id} because there are pending orders")
+
+    # 将菜单状态设置为不可用（"unavailable"）
+    menu.status = "unavailable"
+    db.commit()
+
+    return {"message": f"Menu with id {menu_id} has been successfully deactivated."}

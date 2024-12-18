@@ -61,7 +61,6 @@ class MenuUpdate(BaseModel):
     name: Optional[str]
     image_url: Optional[str]
     price: Optional[float]
-    stock: Optional[int]  # 更新库存信息
     class Config:
         orm_mode = True
 
@@ -74,12 +73,10 @@ class OrderUpdate(BaseModel):
 
 # 创建菜单
 class MenuCreate(BaseModel):
-    id: UUID
     name: str
     image_url: Optional[str]
     price: float
     stock: int  # 菜单初始库存
-
     class Config:
         orm_mode = True
 
@@ -126,7 +123,14 @@ class MenuWithStock(BaseModel):
     name: str
     image_url: Optional[str]
     price: float
+    status : str
     stock: int  # Include the stock field in the response model
 
+    class Config:
+        orm_mode = True
+
+
+class StockUpdateRequest(BaseModel):
+    quantity: int
     class Config:
         orm_mode = True
