@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "e489d70d-2cfd-4a46-acf6-1488641dc891",
+		"name": "RGT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36610614"
+	},
+	"item": [
+		{
+			"name": "auth/login/user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"rgt1\",\n    \"password\":\"rgt1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}auth/login/user",
+					"host": [
+						"{{baseURL}}auth"
+					],
+					"path": [
+						"login",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login/biz",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"biz1\",\n    \"password\":\"biz1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}auth/login/biz",
+					"host": [
+						"{{baseURL}}auth"
+					],
+					"path": [
+						"login",
+						"biz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/all/forBiz",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}order/all/for/biz",
+					"host": [
+						"{{baseURL}}order"
+					],
+					"path": [
+						"all",
+						"for",
+						"biz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/all/forUser",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"biz1\",\n    \"password\":\"biz1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}order/all/forUser",
+					"host": [
+						"{{baseURL}}order"
+					],
+					"path": [
+						"all",
+						"forUser"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiaXoxIiwicm9sZSI6ImJpeiIsImV4cCI6MTczNDUzMjg0OH0.msxED1Ni4eR18CNuI_H-X4ejCI_8kAP0OagTCWDV3ug",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"// Check if the response contains the access_token",
+					"if (pm.response.code === 200) {",
+					"    var jsonResponse = pm.response.json();",
+					"    var token = jsonResponse.access_token;",
+					"",
+					"    // Set the token in the authorization header",
+					"    pm.environment.set(\"access_token\", token);",
+					"    pm.request.headers.add({",
+					"        key: 'Authorization',",
+					"        value: 'Bearer ' + token",
+					"    });",
+					"    console.log(\"Token set successfully!\");",
+					"} else {",
+					"    console.log(\"Error: No access token received\");",
+					"}",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8000/",
+			"type": "string"
+		}
+	]
+}

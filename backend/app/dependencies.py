@@ -16,26 +16,31 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# 普通用户认证依赖
+# 用户认证依赖
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserToken:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         role = payload.get("role")
         if role != "user":
-            raise HTTPException(status_code=403, detail="Unauthorized for this endpoint")
+            raise HTTPException(status_code=403, detail="Unauthorized for this endpoint for User")
         user = db.query(User).filter(User.username == username).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return UserToken(id=user.id, username=user.username, role=role)
+
+        # 确保返回的 UserToken 包含 name 字段
+        return UserToken(id=str(user.id), name=user.username, role=role)  # name 应该是用户的用户名
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# 企业用户认证依赖
+
+
 def get_current_biz_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> BizToken:
     try:
+        print(f"Received token: {token}")  # 打印 token 用于调试
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"Decoded payload: {payload}")  # 打印解析后的 payload
+        
         biz_name = payload.get("sub")
         role = payload.get("role")
         if role != "biz":
@@ -44,5 +49,6 @@ def get_current_biz_user(token: str = Depends(oauth2_scheme), db: Session = Depe
         if not biz:
             raise HTTPException(status_code=404, detail="Enterprise user not found")
         return BizToken(id=biz.id, biz_name=biz.biz_name, role=role)
-    except JWTError:
+    except JWTError as e:
+        print(f"JWTError: {str(e)}")  # 打印异常信息
         raise HTTPException(status_code=401, detail="Invalid token")

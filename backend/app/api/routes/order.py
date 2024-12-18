@@ -25,7 +25,8 @@ def get_all_orders_for_user(db: Session = Depends(get_db), current_user: UserTok
 # 获取企业所有菜单的订单
 @router.get("/all/for/biz", response_model=list[OrderResponse])
 def get_all_orders_for_biz(db: Session = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
-    biz_id = current_user.id
+    # 使用 UUID 类型的 biz_id 查询
+    biz_id = current_user.id  # `id` 应该是 UUID 类型
     orders = db.query(Order).filter(Order.biz_id == biz_id).all()  
     return orders
 
