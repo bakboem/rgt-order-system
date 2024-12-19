@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import CustomText from '../../commonView/customText';
 import SocketUtils from '../../utils/socketUtil';
 import socketService from '../../services/socketService';
+import timerService from '../../services/timerService';
 
 const UserHomeContentsDashboard:React.FC = () => {
 
@@ -17,15 +18,16 @@ const UserHomeContentsDashboard:React.FC = () => {
           socketService.onMessage((message: string) => {
             handleMessage(message);
           });
-          socketService.sendMessage("hello Server ")
-    
         });
-    
-        // 清理函数，组件卸载时断开 WebSocket
+        timerService.start(async () => {
+         await socketService.checkAlive();
+        }, 10000); 
         return () => {
+          timerService.clear();
           socketService.disconnect();
         };
       }, []);
+    
 
     return (
          <Box>

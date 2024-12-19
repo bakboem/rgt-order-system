@@ -1,23 +1,29 @@
 class WebSocketService {
   private socket: WebSocket | null = null;
+  private lastResponse: boolean = false;
 
   public connect(url: string): void {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       this.socket = new WebSocket(url);
 
-      // 监听连接事件
       this.socket.onopen = () => {
         console.log("WebSocket connected");
       };
 
-      // 监听关闭事件
       this.socket.onclose = () => {
         console.log("WebSocket disconnected");
       };
 
-      // 监听错误事件
       this.socket.onerror = (error) => {
         console.error("WebSocket error:", error);
+      };
+
+      this.socket.onmessage = (event) => {
+        if (event.data === "pong") {
+          this.lastResponse = true; // 收到服务端的 pong 回复
+        } else {
+          console.log("Received message:", event.data);
+        }
       };
     }
   }
@@ -45,6 +51,22 @@ class WebSocketService {
       this.socket.close();
       this.socket = null;
     }
+  }
+
+
+  public async checkAlive(): Promise<boolean> {
+    console.log("start check Alive");
+    return new Promise((resolve) => {
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        this.lastResponse = false;
+        this.sendMessage("ping"); 
+        setTimeout(() => {
+          resolve(this.lastResponse); 
+        }, 1000);
+      } else {
+        resolve(false); 
+      }
+    });
   }
 }
 
