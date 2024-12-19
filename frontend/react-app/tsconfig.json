@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES6",
     "lib": [
       "dom",
       "dom.iterable",
@@ -15,14 +15,16 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "types": ["node", "@testing-library/jest-dom"] // 添加类型依赖
   },
   "include": [
-    "src"
+    "src",
+    "src/global.d.ts" // 包含手动声明的全局类型文件
   ]
 }

@@ -26,7 +26,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <RecoilRoot>
-    {/* <React.StrictMode> */}
+    <React.StrictMode>
     {/* // prod */}
     <ThemeProvider theme={appTheme}>
       <Router>
@@ -41,7 +41,7 @@ root.render(
         </Routes>
       </Router>
     </ThemeProvider>
-    {/* </React.StrictMode> */}
+    </React.StrictMode>
   </RecoilRoot>,
 );
 

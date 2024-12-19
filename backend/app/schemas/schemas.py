@@ -8,7 +8,6 @@ class LoginRequest(BaseModel):
 
 class Token(BaseModel):
     access_token: str
-    
 class UserToken(BaseModel):
     id: UUID
     name: str

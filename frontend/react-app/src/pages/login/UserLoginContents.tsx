@@ -30,6 +30,7 @@ const UserLoginContents: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!(username && password)) return;
     try {
       console.log("Starting login process...");
       const response = await apiRequest<LoginResponseModel>(ApiRequestType.USER_LOGIN, {
