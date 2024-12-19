@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
+from jose import JWTError
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
+from app.dependencies import get_current_biz_user, get_current_user
 from app.models.models import User, Biz
 from app.services.auth_service import verify_password, create_access_token
-from app.schemas.schemas import LoginRequest, Token
+from app.schemas.schemas import BizToken, LoginRequest, Token, UserToken
 from datetime import timedelta
 
 router = APIRouter()
@@ -34,3 +36,10 @@ def biz_login(login: LoginRequest, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": biz.biz_name,"role": "biz"}, expires_delta=timedelta(minutes=30))
     return {"access_token": access_token}
 
+@router.get("/user/info", response_model=UserToken)
+def get_user_info(user: UserToken = Depends(get_current_user)):
+    return user
+
+@router.get("/biz/info", response_model=BizToken)
+def get_biz_info(biz: BizToken = Depends(get_current_biz_user)):
+    return biz

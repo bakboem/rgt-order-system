@@ -6,6 +6,8 @@ import {
   login_route_name_for_user,
   login_route_name_for_biz,
   splashPage,
+  userTokenName,
+  entryPage,
 } from '../../config/statics';
 
 const EntryPage: React.FC = () => {
@@ -19,9 +21,9 @@ const EntryPage: React.FC = () => {
       navigate(splashPage);
       return;
     }
-
-    if (target === 'user') {
-      const userToken = sessionStorage.getItem('userToken');
+    const isCurrentUrl =  window.location.pathname=== entryPage;
+    if (target === 'user'&& isCurrentUrl ) {
+      const userToken = sessionStorage.getItem(userTokenName);
       if (userToken) {
         console.log('Home page User');
         navigate(home_route_name_for_user);
@@ -29,7 +31,7 @@ const EntryPage: React.FC = () => {
         console.log('login page Home');
         navigate(login_route_name_for_user);
       }
-    } else if (target === 'biz') {
+    } else if (target === 'biz'&& isCurrentUrl) {
       const bizToken = sessionStorage.getItem('bizToken');
       if (bizToken) {
         console.log('Home page Biz');

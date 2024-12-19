@@ -79,6 +79,16 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
           url: `${apiBaseSetting.baseUrl}/update/order/${id}`,
           method: 'DELETE',
         };
+        case ApiRequestType.WHOAMI_BIZ:
+          return {
+            url: `${apiBaseSetting.baseUrl}/auth/biz/info`,
+            method: 'GET',
+          };
+          case ApiRequestType.WHOAMI_USER:
+            return {
+              url: `${apiBaseSetting.baseUrl}/auth/user/info`,
+              method: 'GET',
+            };
     default:
       throw new Error(`Unknown request type: ${requestType}`);
   }

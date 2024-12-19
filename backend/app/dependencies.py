@@ -8,7 +8,11 @@ from sqlalchemy.orm import Session
 from app.schemas.schemas import UserToken, BizToken
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+# 为普通用户定义 OAuth2 端点
+oauth2_scheme_user = OAuth2PasswordBearer(tokenUrl="/auth/login/user")
+
+# 为企业用户定义 OAuth2 端点
+oauth2_scheme_biz = OAuth2PasswordBearer(tokenUrl="/auth/login/biz")
 
 def get_db():
     db = SessionLocal()
@@ -17,7 +21,7 @@ def get_db():
     finally:
         db.close()
 # 用户认证依赖
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserToken:
+def get_current_user(token: str = Depends(oauth2_scheme_user), db: Session = Depends(get_db)) -> UserToken:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
@@ -35,7 +39,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 
 
-def get_current_biz_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> BizToken:
+def get_current_biz_user(token: str = Depends(oauth2_scheme_biz), db: Session = Depends(get_db)) -> BizToken:
     try:
         print(f"Received token: {token}")  # 打印 token 用于调试
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

@@ -22,3 +22,31 @@ export class LoginResponseModel {
     this.access_token = access_token;
   }
 }
+
+export class UserResponseModel {
+
+  id: string;
+  name: string;
+  role: string;
+
+  constructor(id: string,name:string,role : string) {
+  
+    this.id = id;
+    this.name = name;
+    this.role = role;
+  }
+}
+
+
+export class BizResponseModel {
+  id: string;
+  biz_name: string;
+  role: string;
+
+  constructor(id: string,biz_name:string,role : string) {
+  
+    this.id = id;
+    this.biz_name = biz_name;
+    this.role = role;
+  }
+}

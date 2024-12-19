@@ -13,3 +13,7 @@ export const isProdMode = process.env.NODE_ENV === 'production';
 export const token_expired_event_name = 'tokenExpired';
 
 // Source
+export const userTokenName = 'userToken';
+export const bizTokenName = 'bizToken';
+
+
