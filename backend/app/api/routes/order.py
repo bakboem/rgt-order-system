@@ -123,8 +123,9 @@ def add_orders(orders: list[OrderCreate], db: Session = Depends(get_db), current
 
     db.add_all(new_orders)
     db.commit()
-
     return {"message": "success"}
+
+
 @router.put("/update/{order_id}", response_model=OrderResponse)
 async def update_order_status(order_id: UUID, order_update: OrderUpdate, db: Session = Depends(get_db)):
     """更新订单状态并返回更新后的订单信息"""

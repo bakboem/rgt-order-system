@@ -12,7 +12,7 @@ async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):
         while True:
             data = await websocket.receive_text()
             print(f"Received message from user {user_id}: {data}")
-            await websocket_service.send_personal_message(f"Hello user {user_id}, you sent: {data}", websocket)
+            await websocket_service.send_personal_message(f"Received Message\nFROM:{user_id}\nDATA:{data}", websocket)
     except WebSocketDisconnect:
         websocket_service.disconnect_user(websocket, user_id)
         print(f"User {user_id} disconnected")
