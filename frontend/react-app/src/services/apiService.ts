@@ -3,9 +3,10 @@ import { getApiConfig } from '../config/apiConfig';
 import { ApiRequestTypeBodyModel } from '../models/apiRequestBodyModels';
 import { apiBaseSetting } from '../config/apiBaseSetting';
 import 'reflect-metadata'; // 如果你还没有引入 reflect-metadata
-import { token_expired_event_name } from '../config/statics';
+import {  token_expired_event_name } from '../config/statics';
 import { ApiHooks } from '../models/apiHooks';
 import { getToken, isTokenValid } from '../utils/tokenUtils';
+import { emit } from "./emitServer";
 function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
   const instance = new cls();
 
@@ -190,7 +191,11 @@ export async function apiRequest<T>(
       if (hooks?.onResponseError) {
         await hooks.onResponseError(error as Error);
       }
-      throw new Error(`Request failed: ${response.status}`);
+      if (response.status === 401) {
+        emit("unauthorized"); 
+        throw new Error(`Request failed: ${response.status}`);
+      }
+     
     }
 
     let result: T;

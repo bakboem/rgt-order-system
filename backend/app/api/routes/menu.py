@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
 from app.models.models import Instock, Menu,Order,SaleTracking
 from app.schemas.schemas import MenuCreate, MenuUpdate,BizToken,InstockUpdate, MenuResponse,MenuWithStock,StockUpdateRequest
-from app.dependencies import get_current_biz_user  
+from app.dependencies import get_current_biz_user, get_current_user  
 from uuid import UUID
 from datetime import datetime
 router = APIRouter()
@@ -16,9 +16,32 @@ def get_db():
         db.close()
 
 # 获取当前企业的所有菜单
-@router.get("/all", response_model=list[MenuWithStock])
-def get_all_menus(db: Session = Depends(get_db)):
-    menus = db.query(Menu).filter(Menu.status == "available").all()
+@router.get("/all/for/biz", response_model=list[MenuWithStock])
+def get_all_menus(db: Session = Depends(get_db),current_user: BizToken = Depends(get_current_biz_user)):
+    menus = db.query(Menu).filter(
+    (Menu.status == "available") & (current_user.id == Menu.biz_id)
+    ).all()
+    # Get stock for each menu from the Instock table
+    response = []
+    for menu in menus:
+        stock = db.query(Instock).filter(Instock.menu_id == menu.id).first()
+        response.append(MenuWithStock(
+            id=menu.id,
+            name=menu.name,
+            image_url=menu.image_url,
+            price=menu.price,
+            status = menu.status,
+            stock=stock.stock_quantity if stock else 0  # If no stock record, return 0
+        ))
+    return response
+
+
+# 获取所有企业的所有菜单
+@router.get("/all/for/user", response_model=list[MenuWithStock])
+def get_all_menus(db: Session = Depends(get_db),current_user: BizToken = Depends(get_current_user)):
+    menus = db.query(Menu).filter(
+    (Menu.status == "available")
+    ).all()
     # Get stock for each menu from the Instock table
     response = []
     for menu in menus:

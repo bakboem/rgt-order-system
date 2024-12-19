@@ -18,19 +18,21 @@ import BizHome from './pages/home/BizHome';
 import UserHome from './pages/home/UserHome';
 import BizLogin from './pages/login/BizLogin';
 import UserLogin from './pages/login/UserLogin';
-
 import { ThemeProvider } from '@mui/material/styles';
 import { appTheme } from './style/theme';
+import UnauthorizedHandler from './services/unauthorizedHandle';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <RecoilRoot>
     <React.StrictMode>
+
     {/* // prod */}
     <ThemeProvider theme={appTheme}>
       <Router>
         {/* <Router> */}
+        <UnauthorizedHandler /> {/* 全局监听 401 事件 */}
         <Routes>
           <Route path={home_route_name_for_biz} element={<BizHome />} />
           <Route path={home_route_name_for_user} element={<UserHome />} />

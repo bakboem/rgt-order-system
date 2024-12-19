@@ -54,11 +54,16 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         url: `${apiBaseSetting.baseUrl}/menu/${id}/stock`,
         method: 'GET',
       };
-    case ApiRequestType.MENU_ALL:
+    case ApiRequestType.MENU_ALL_FOR_USER:
       return {
-        url: `${apiBaseSetting.baseUrl}/menu/all`,
+        url: `${apiBaseSetting.baseUrl}/menu/all/for/user`,
         method: 'GET',
       };
+      case ApiRequestType.MENU_ALL_FOR_BIZ:
+        return {
+          url: `${apiBaseSetting.baseUrl}/menu/all/for/biz`,
+          method: 'GET',
+        };
     case ApiRequestType.ORDER_ADD:
       return {
         url: `${apiBaseSetting.baseUrl}/order/add`,

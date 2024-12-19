@@ -1,5 +1,4 @@
 import { Expose } from "class-transformer";
-
 export class ResponseModel<T> {
   message: string;
   statusCode: number;
@@ -48,5 +47,22 @@ export class BizResponseModel {
     this.id = id;
     this.biz_name = biz_name;
     this.role = role;
+  }
+}
+
+export class MenuResponseModel {
+  id: string;
+  name: string;
+  image_url: string;
+  price: number;
+  stock: number;
+
+  constructor(id: string,name:string,image_url : string,price :number,stock:number) {
+  
+    this.id = id;
+    this.name = name;
+    this.image_url = image_url;
+    this.price = price;
+    this.stock = stock;
   }
 }
