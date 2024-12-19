@@ -39,7 +39,7 @@ const SplashContents: React.FC = () => {
 
       <Box sx={defaultContainerRowSx}>
         <CustomButton
-          onClick={() => handleButtonClick('user')}
+          onClick={async() => handleButtonClick('user')}
           textKey={userButtonText}
         >
           {gotoUser}
@@ -48,7 +48,7 @@ const SplashContents: React.FC = () => {
         <CustomRowHolder />
 
         <CustomButton
-          onClick={() => handleButtonClick('biz')}
+          onClick={async () => handleButtonClick('biz')}
           textKey={bizButtonText}
         >
           {gotoHome}

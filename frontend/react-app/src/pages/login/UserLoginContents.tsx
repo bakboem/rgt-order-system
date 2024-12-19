@@ -7,8 +7,15 @@ import CustomTextField from '../../commonView/customTextField';
 import CustomColumnHolder from '../../commonView/customColumnHolder';
 import CustomButton from '../../commonView/customButton';
 import CustomText from '../../commonView/customText';
+import { apiRequest } from '../../services/apiService';
+import { LoginResponseModel } from '../../models/responseModels';
+import { ApiRequestType } from '../../enums/apiRequestType';
+import { useNavigate } from 'react-router-dom';
+import { home_route_name_for_user } from '../../config/statics';
 
 const UserLoginContents: React.FC = () => {
+  const navigate = useNavigate();
+
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
@@ -23,6 +30,22 @@ const UserLoginContents: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      console.log("Starting login process...");
+      const response = await apiRequest<LoginResponseModel>(ApiRequestType.USER_LOGIN, {
+        body: { username, password },
+      });
+      console.log(response);
+      if (response.access_token) {
+        console.log("Login successful:", response.access_token);
+        sessionStorage.setItem("userToken", response.access_token);
+        sessionStorage.setItem("activeToken",response.access_token);
+        navigate(home_route_name_for_user);
+      }
+     
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
     // await login(username, password);
   };
   const userNameInputText = "아이디";
@@ -60,7 +83,7 @@ const UserLoginContents: React.FC = () => {
         sx={{ width: s_submmitButtonWidth }}
         textKey={submmitButtonText}
         type="submit"
-        onClick={() => handleSubmit}
+        onClick={ handleSubmit}
       />
     </Box>
   );

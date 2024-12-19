@@ -7,7 +7,7 @@ import { s_buttonWidth } from '../style/size';
 import { defaultButtonSx } from '../style/sx/buttonSx';
 
 interface CustomButtonProps {
-  onClick: () => void; // 按钮点击事件处理器
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;// 按钮点击事件处理器
   textKey?: string; // 用于翻译按钮文本的 i18n 键
   children?: React.ReactNode; // 按钮的子元素内容，和 textKey 互斥
   sx?: SxProps<Theme>; // 可选的自定义样式

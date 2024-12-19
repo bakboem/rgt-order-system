@@ -23,7 +23,7 @@ def user_login(login: LoginRequest, db: Session = Depends(get_db)):
     if not user or not verify_password(login.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": user.username,"role": "user"}, expires_delta=timedelta(minutes=30))
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}
 
 # 企业用户登录
 @router.post("/login/biz", response_model=Token)
@@ -32,5 +32,5 @@ def biz_login(login: LoginRequest, db: Session = Depends(get_db)):
     if not biz or not verify_password(login.password, biz.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": biz.biz_name,"role": "biz"}, expires_delta=timedelta(minutes=30))
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}
 

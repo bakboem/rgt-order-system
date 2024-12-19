@@ -1,5 +1,5 @@
 export function getToken(): string | null {
-  return sessionStorage.getItem('token');
+  return sessionStorage.getItem('activeToken');
 }
 
 export async function refreshToken(): Promise<string> {

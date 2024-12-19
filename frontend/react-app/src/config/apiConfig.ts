@@ -26,7 +26,7 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         method: 'POST',
       };
     case ApiRequestType.BIZ_LOGIN:
-      return { url: `${apiBaseSetting.baseUrl}auth/login/biz`, method: 'POST' };
+      return { url: `${apiBaseSetting.baseUrl}/auth/login/biz`, method: 'POST' };
     case ApiRequestType.ORDER_ALL_FOR_USER:
       return {
         url: `${apiBaseSetting.baseUrl}/order/all/for/user`,

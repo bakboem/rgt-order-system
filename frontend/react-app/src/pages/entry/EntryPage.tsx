@@ -21,7 +21,7 @@ const EntryPage: React.FC = () => {
     }
 
     if (target === 'user') {
-      const userToken = localStorage.getItem('userToken');
+      const userToken = sessionStorage.getItem('userToken');
       if (userToken) {
         console.log('Home page User');
         navigate(home_route_name_for_user);
@@ -30,7 +30,7 @@ const EntryPage: React.FC = () => {
         navigate(login_route_name_for_user);
       }
     } else if (target === 'biz') {
-      const bizToken = localStorage.getItem('bizToken');
+      const bizToken = sessionStorage.getItem('bizToken');
       if (bizToken) {
         console.log('Home page Biz');
         navigate(home_route_name_for_biz);

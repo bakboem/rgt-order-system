@@ -26,7 +26,7 @@ const ChangePageContents: React.FC = () => {
         sx={{ width: s_submmitButtonWidth }}
         textKey={submmitButtonText}
         type="submit"
-        onClick={() => {
+        onClick={async() => {
           navigate(splashPage);
         }}
       />
