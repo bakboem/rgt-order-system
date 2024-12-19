@@ -12,11 +12,16 @@ import { s_full } from '../../style/size';
 import { as_center } from '../../style/align';
 import CustomColumnHolder from '../../commonView/customColumnHolder';
 import CustomRowHolder from '../../commonView/customRowHolder';
+import { homeTabBarState } from '../../state/homePageState/atoms';
+import { useRecoilState } from 'recoil';
 
 const SplashContents: React.FC = () => {
+    const [tabIndex,setIndex] = useRecoilState(homeTabBarState);
   const navigate = useNavigate();
 
   const handleButtonClick = (target: string) => {
+    setIndex(0);
+    console.log(tabIndex)
     navigate(entryPage, { state: { target } }); // 将点击的目标类型传递到EntryPage
   };
   const gotoUser = 'Go to User';

@@ -1,41 +1,48 @@
-import { io, Socket } from "socket.io-client";
-
 class WebSocketService {
-  private socket: Socket | null = null;
+  private socket: WebSocket | null = null;
 
   public connect(url: string): void {
-    if (!this.socket) {
-      this.socket = io(url);
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      this.socket = new WebSocket(url);
 
-      this.socket.on("connect", () => {
+      // 监听连接事件
+      this.socket.onopen = () => {
         console.log("WebSocket connected");
-      });
+      };
 
-      this.socket.on("disconnect", () => {
+      // 监听关闭事件
+      this.socket.onclose = () => {
         console.log("WebSocket disconnected");
-      });
+      };
+
+      // 监听错误事件
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
     }
   }
 
-  public onMessage(event: string, callback: (data: any) => void): void {
+  public onMessage(callback: (data: string) => void): void {
     if (this.socket) {
-      this.socket.on(event, callback);
+      this.socket.onmessage = (event) => {
+        callback(event.data);
+      };
     } else {
       console.error("WebSocket is not connected.");
     }
   }
 
-  public sendMessage(event: string, data: any): void {
-    if (this.socket) {
-      this.socket.emit(event, data);
+  public sendMessage(message: string): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(message);
     } else {
-      console.error("WebSocket is not connected.");
+      console.error("WebSocket is not connected or not ready.");
     }
   }
 
   public disconnect(): void {
     if (this.socket) {
-      this.socket.disconnect();
+      this.socket.close();
       this.socket = null;
     }
   }

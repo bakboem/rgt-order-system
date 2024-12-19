@@ -19,7 +19,6 @@ class BizToken(BaseModel):
     biz_name: str
     role: str
 
-
 # 菜单的响应模型
 class MenuResponse(BaseModel):
     id: UUID

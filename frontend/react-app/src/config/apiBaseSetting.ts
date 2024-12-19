@@ -2,8 +2,8 @@
 export const apiBaseSetting = {
   socketUrl:
     process.env.NODE_ENV === 'production'
-      ? 'wss://hospital.temashare.com/mqtt/socket/'
-      : 'ws://localhost:8000/ws/user/xxxx',
+      ? 'ws://localhost:8000/socket'
+      : 'ws://localhost:8000/socket',
   baseUrl: 'http://localhost:8000',
   defaultHeaders: {
     'Content-Type': 'application/json', // 默认的 Content-Type
