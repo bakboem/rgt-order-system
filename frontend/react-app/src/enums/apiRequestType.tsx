@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 export enum ApiRequestType {
-    LOGIN = "LOGIN",
-    REFRESH_TOKEN = "MODIFY_USER",
-    ADD_PATIENT = "ADD_PATIENT",
-    LIST_PATIENT = "LIST_PATIENT",
-    LIST_THERMOMETER = "LIST_THERMOMETER",
-    LIST_STAFF = "LIST_STAFF",
-    BIND_THERMOMETER = "BIND_THERMOMETER",
-    LIST_BUIDONG = "LIST_BUIDONG",
-    LIST_FAVORITES = "LIST_FAVORITES",
-    ADD_OR_DEL_FAVORITES = "ADD_OR_DEL_FAVORITES",
-    GRAFANA_TOKEN_REQUEST = "GRAFANA_TOKEN_REQUEST",
-    LAST_TEMPERATURE_REQUEST = "LAST_TEMPERATURE_REQUEST",
-  }
-  
-  // 自定义反向查找函数
-  function getEnumKeyByValue(value: string): string | undefined {
-    return (
-      Object.keys(ApiRequestType) as Array<keyof typeof ApiRequestType>
-    ).find((key) => ApiRequestType[key] === value);
-  }
-  
+  USER_LOGIN = "LOGIN",
+  BIZ_LOGIN = "BIZLOGIN",
+  ORDER_ALL_FOR_USER = "ORDERALLFORUSER",
+  ORDER_ALL_FOR_BIZ = "ORDERALLFORBIZ",
+  MENU_ADD = "MANUADD",
+  MENU_UPDATE = "MENUUPDATE",
+  MENU_UPDATE_FOR_STOCK = "MENUUPDATEFORSTOCK",
+  CHECK_MENU_STOCK = "CHECKMENUSTOCK",
+  MENU_ALL = "MENUALL",
+  ORDER_ADD = "ORDERADD",
+  ORDER_DELETE= "ORDERDELETE",
+  MENU_DELETE= "MENUDELETE",
+  ORDER_UPDATE= "ORDERUPDATE"
+}
+
+// 自定义反向查找函数
+function getEnumKeyByValue(value: string): string | undefined {
+  return (
+    Object.keys(ApiRequestType) as Array<keyof typeof ApiRequestType>
+  ).find((key) => ApiRequestType[key] === value);
+}

@@ -7,4 +7,4 @@
  * Copyright (c) 2024 BioCube
  */
 
-export const f_body = "body1";
+export const f_body = 'body1';

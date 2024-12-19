@@ -7,11 +7,11 @@
  * Copyright (c) 2024 BioCube
  */
 
-import { as_between, as_c, as_center, as_end, as_r, as_start } from "../align";
-import { s_full } from "../size";
+import { as_between, as_c, as_center, as_end, as_r, as_start } from '../align';
+import { s_full } from '../size';
 
 export const columnStart_rowCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_c,
   justifyContent: as_center,
   alignItems: as_start,
@@ -25,7 +25,7 @@ export const columnStart_rowEnd = {
   justifyContent: as_end,
 };
 export const columnEnd_rowCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_c,
   justifyContent: as_center,
   alignItems: as_end,
@@ -41,7 +41,7 @@ export const columnEnd_rowRight = {
 };
 
 export const columnCenter_rowCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_c,
   justifyContent: as_center,
   alignItems: as_center,
@@ -58,14 +58,14 @@ export const columnCenter_rowEnd = {
 };
 
 export const rowStart_columnCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_r,
   justifyContent: as_start,
   alignItems: as_center,
 };
 
 export const rowSpaceBetwon_columnCenter = {
-  display: "flex",
+  display: 'flex',
   width: s_full,
   flexDirection: as_r,
   justifyContent: as_between,
@@ -81,7 +81,7 @@ export const rowStart_columnEnd = {
   alignItems: as_end,
 };
 export const rowEnd_columnCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_c,
   justifyContent: as_end,
   alignItems: as_center,
@@ -96,7 +96,7 @@ export const rowEnd_columnRight = {
   alignItems: as_end,
 };
 export const rowCenter_columnCenter = {
-  display: "flex",
+  display: 'flex',
   flexDirection: as_r,
   justifyContent: as_center,
   alignItems: as_center,

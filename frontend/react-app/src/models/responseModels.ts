@@ -1,5 +1,3 @@
-
-
 export class ResponseModel<T> {
   message: string;
   statusCode: number;
@@ -11,4 +9,3 @@ export class ResponseModel<T> {
     this.data = data;
   }
 }
-

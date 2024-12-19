@@ -1,24 +1,24 @@
-import { ApiRequestType } from "../enums/apiRequestType";
-import { getApiConfig } from "../config/apiConfig";
-import { ApiRequestTypeBodyModel } from "../models/apiRequestBodyModels";
-import { apiBaseSetting } from "../config/apiBaseSetting";
-import "reflect-metadata"; // 如果你还没有引入 reflect-metadata
-import { token_expired_event_name } from "../config/statics";
-import { ApiHooks } from "../models/apiHooks";
-import { getToken, isTokenValid } from "../utils/tokenUtils";
+import { ApiRequestType } from '../enums/apiRequestType';
+import { getApiConfig } from '../config/apiConfig';
+import { ApiRequestTypeBodyModel } from '../models/apiRequestBodyModels';
+import { apiBaseSetting } from '../config/apiBaseSetting';
+import 'reflect-metadata'; // 如果你还没有引入 reflect-metadata
+import { token_expired_event_name } from '../config/statics';
+import { ApiHooks } from '../models/apiHooks';
+import { getToken, isTokenValid } from '../utils/tokenUtils';
 function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
   const instance = new cls();
 
   for (const key of Object.keys(json)) {
     // 获取映射的属性名 (如通过 @Expose({ name: '...' }))
     const exposedName =
-      Reflect.getMetadata("expose:name", cls.prototype, key) || key;
+      Reflect.getMetadata('expose:name', cls.prototype, key) || key;
 
     // 获取属性的元数据类型
     const metadataType = Reflect.getMetadata(
-      "design:type",
+      'design:type',
       cls.prototype,
-      exposedName
+      exposedName,
     );
 
     if (metadataType) {
@@ -29,13 +29,13 @@ function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
       // 处理数组
       else if (metadataType === Array && Array.isArray(json[key])) {
         const arrayElementType = Reflect.getMetadata(
-          "design:elementtype",
+          'design:elementtype',
           cls.prototype,
-          exposedName
+          exposedName,
         );
         if (arrayElementType) {
           (instance as any)[exposedName] = json[key].map((item: any) =>
-            deserialize(arrayElementType, item)
+            deserialize(arrayElementType, item),
           );
         } else {
           (instance as any)[exposedName] = json[key]; // 如果没有定义元素类型，直接赋值
@@ -43,7 +43,7 @@ function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
       }
       // 处理嵌套对象
       else if (
-        typeof metadataType === "function" &&
+        typeof metadataType === 'function' &&
         metadataType !== String &&
         metadataType !== Number &&
         metadataType !== Boolean
@@ -102,7 +102,7 @@ export async function apiRequest<T>(
   requestBody?: ApiRequestTypeBodyModel,
   hooks?: ApiHooks,
   cls?: new (...args: any[]) => T, // 新增一个类构造函数参数
-  retryCount: number = 0 // 新增参数，默认重试次数为 0
+  retryCount: number = 0, // 新增参数，默认重试次数为 0
 ): Promise<T> {
   const apiConfigObject = getApiConfig(requestType);
   const { params, body, headers = {}, options = {} } = requestBody || {};
@@ -120,18 +120,18 @@ export async function apiRequest<T>(
   // 合并 headers
   const combinedHeaders = new Headers(staticHeaders);
   if (token) {
-    combinedHeaders.append("Authorization", `Bearer ${token}`);
+    combinedHeaders.append('Authorization', `Bearer ${token}`);
   }
 
   const filteredHeaders = filterHeaders(headers);
   Object.entries(filteredHeaders).forEach(([key, value]) =>
-    combinedHeaders.append(key, value)
+    combinedHeaders.append(key, value),
   );
 
   if (options.headers) {
     const filteredOptionHeaders = filterHeaders(options.headers);
     Object.entries(filteredOptionHeaders).forEach(([key, value]) =>
-      combinedHeaders.append(key, value)
+      combinedHeaders.append(key, value),
     );
   }
 
@@ -141,35 +141,35 @@ export async function apiRequest<T>(
   }
 
   let requestBodyData: BodyInit | undefined;
-  const contentType = combinedHeaders.get("Content-Type") || "application/json";
+  const contentType = combinedHeaders.get('Content-Type') || 'application/json';
 
   if (body && hooks?.serialize) {
     requestBodyData = hooks.serialize(body);
   } else if (body) {
-    if (contentType === "application/json") {
+    if (contentType === 'application/json') {
       requestBodyData = JSON.stringify(body);
-    } else if (contentType === "application/x-www-form-urlencoded") {
+    } else if (contentType === 'application/x-www-form-urlencoded') {
       requestBodyData = new URLSearchParams(
-        body as Record<string, string>
+        body as Record<string, string>,
       ).toString();
-    } else if (contentType === "multipart/form-data") {
+    } else if (contentType === 'multipart/form-data') {
       const formData = new FormData();
       Object.entries(body).forEach(([key, value]) => {
-        if (value instanceof Blob || typeof value === "string") {
+        if (value instanceof Blob || typeof value === 'string') {
           formData.append(key, value);
         } else {
           formData.append(key, String(value));
         }
       });
       requestBodyData = formData;
-      combinedHeaders.delete("Content-Type");
+      combinedHeaders.delete('Content-Type');
     }
   }
 
   let url = apiConfigObject.url;
   if (params) {
     const queryString = new URLSearchParams(
-      Object.entries(params).map(([key, value]) => [key, String(value)])
+      Object.entries(params).map(([key, value]) => [key, String(value)]),
     ).toString();
     url += `?${queryString}`;
   }
@@ -178,7 +178,7 @@ export async function apiRequest<T>(
   const fetchOptions: RequestInit = {
     method: apiConfigObject.method,
     headers: combinedHeaders,
-    ...(apiConfigObject.method !== "GET" && { body: requestBodyData }), // 确保 GET 请求不带 body
+    ...(apiConfigObject.method !== 'GET' && { body: requestBodyData }), // 确保 GET 请求不带 body
     ...options,
   };
 
@@ -208,7 +208,7 @@ export async function apiRequest<T>(
     if (hooks?.onResponseSuccess) {
       await hooks.onResponseSuccess(response);
     } else {
-      console.log("Request succeeded:", response);
+      console.log('Request succeeded:', response);
     }
 
     return result;
@@ -216,7 +216,7 @@ export async function apiRequest<T>(
     if (hooks?.onResponseError) {
       await hooks.onResponseError(error as Error);
     } else {
-      console.error("Request failed:", error);
+      console.error('Request failed:', error);
     }
     throw error;
   }

@@ -7,10 +7,10 @@
  * Copyright (c) 2024 BioCube
  */
 
-import React from "react";
-import Grid2 from "@mui/material/Grid2";
-import Box from "@mui/material/Box";
-import { s_full } from "../style/size";
+import React from 'react';
+import Grid2 from '@mui/material/Grid2';
+import Box from '@mui/material/Box';
+import { s_full } from '../style/size';
 
 type LayoutConfig = {
   areas: Array<{
@@ -23,19 +23,19 @@ type LayoutConfig = {
   }>;
   rowSpacing?: number;
   columnSpacing?: number;
-  flexDirection?: "row" | "column";
+  flexDirection?: 'row' | 'column';
 };
 
 export const generateGridLayout = (
   { areas, rowSpacing, columnSpacing }: LayoutConfig,
-  flexDirection = "row" //! inportant
+  flexDirection = 'row', //! inportant
 ) => {
   return (
     <Grid2
       container
       sx={{
         height: s_full,
-        display: "flex",
+        display: 'flex',
         flexDirection: flexDirection,
       }}
       rowSpacing={rowSpacing}
@@ -47,19 +47,19 @@ export const generateGridLayout = (
             key={index}
             size={area.size || 12}
             sx={{
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               height: area.height || s_full,
             }}
           >
             <Box
               sx={{
-                backgroundColor: area.backgroundColor || "#FFFFFFFF",
-                display: "flex",
+                backgroundColor: area.backgroundColor || '#FFFFFFFF',
+                display: 'flex',
                 justifyContent: area.justifyContent
                   ? area.justifyContent
-                  : "center",
-                alignItems: area.alignItems ? area.alignItems : "center",
+                  : 'center',
+                alignItems: area.alignItems ? area.alignItems : 'center',
                 height: area.height ? area.height : s_full,
                 width: s_full,
               }}
