@@ -12,6 +12,7 @@ export class ResponseModel<T> {
 }
 
 
+
 export class LoginResponseModel {
   @Expose({ name: "access_token" })
   access_token: string;
@@ -64,5 +65,35 @@ export class MenuResponseModel {
     this.image_url = image_url;
     this.price = price;
     this.stock = stock;
+  }
+}
+
+export class OrderResponseModel {
+  id: string;
+  state : string
+  quantity: number;
+  menu_id: string;
+  biz_id: string;
+  menu: MenuResponseModel;
+
+  constructor(id: string,state:string,quantity:number,menu_id : string,biz_id :string,menu: MenuResponseModel) {
+  
+    this.id = id;
+    this.state = state
+    this.quantity = quantity;
+    this.menu_id = menu_id;
+    this.biz_id = biz_id;
+    this.menu = menu;
+  }
+}
+
+export class CommonResponseModel {
+  message: string;
+
+
+  constructor(message:string) {
+  
+    this.message = message;
+
   }
 }

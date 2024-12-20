@@ -1,7 +1,7 @@
 
 
 import { atom } from "recoil";
-import { MenuResponseModel } from "../../models/responseModels";
+import { MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
 
 
 export const homeTabBarState = atom<number>({
@@ -10,7 +10,11 @@ export const homeTabBarState = atom<number>({
 });
 
 export const homeMenuListState = atom<MenuResponseModel[]>({
-  key: "menuListState", // unique ID
+  key: "homeMenuListState", // unique ID
   default: [],
 });
 
+export const homeOrderListState = atom<OrderResponseModel[]>({
+  key: "homeOrderListState", // unique ID
+  default: [],
+});

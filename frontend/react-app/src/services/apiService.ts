@@ -6,7 +6,7 @@ import 'reflect-metadata'; // 如果你还没有引入 reflect-metadata
 import {  token_expired_event_name } from '../config/statics';
 import { ApiHooks } from '../models/apiHooks';
 import { getToken, isTokenValid } from '../utils/tokenUtils';
-import { emit } from "./emitServer";
+import { emit,throttleEmit } from "./emitServer";
 function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
   const instance = new cls();
 
@@ -196,6 +196,11 @@ export async function apiRequest<T>(
         throw new Error(`Request failed: ${response.status}`);
       }
      
+      if (response.status === 400) {
+        const body = await response.json();
+        throttleEmit("badRequest", { message: body.detail }, 3000); // 限制3秒内只运行一次
+      }
+     
     }
 
     let result: T;
@@ -226,3 +231,4 @@ export async function apiRequest<T>(
     throw error;
   }
 }
+

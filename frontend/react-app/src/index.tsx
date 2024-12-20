@@ -21,6 +21,8 @@ import UserLogin from './pages/login/UserLogin';
 import { ThemeProvider } from '@mui/material/styles';
 import { appTheme } from './style/theme';
 import UnauthorizedHandler from './services/unauthorizedHandle';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
@@ -32,6 +34,7 @@ root.render(
     <ThemeProvider theme={appTheme}>
       <Router>
         {/* <Router> */}
+        <ToastContainer />
         <UnauthorizedHandler /> {/* 全局监听 401 事件 */}
         <Routes>
           <Route path={home_route_name_for_biz} element={<BizHome />} />

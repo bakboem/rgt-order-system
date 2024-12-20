@@ -5,7 +5,7 @@ import UserHomeMenuTableView from './UserHomeMenuTableView';
 import { defaultContainerColumnSx } from '../../style/sx/containerSx';
 import { s_full } from '../../style/size';
 import { userTokenName } from '../../config/statics';
-import { getToken } from '../../utils/tokenUtils';
+import { getToken, isTokenValid } from '../../utils/tokenUtils';
 
 
 const UserHomeContentsMain: React.FC = () => {
@@ -14,14 +14,14 @@ const UserHomeContentsMain: React.FC = () => {
   useEffect(() => {
     const userToken  = sessionStorage.getItem(userTokenName);
     const activeToken  = getToken();
-  if (userToken && userToken ===activeToken) {
+  if (userToken && userToken ===activeToken && isTokenValid(userToken)) {
     requestMenu();
   }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (
-    <Box sx={{...defaultContainerColumnSx,width:s_full,height: s_full}}>
+    <Box sx={{...defaultContainerColumnSx,width:s_full}}>
       <UserHomeMenuTableView data={ menus}/>
     </Box>
   );
