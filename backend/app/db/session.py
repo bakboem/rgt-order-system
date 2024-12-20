@@ -1,9 +1,12 @@
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from app.core.config import DATABASE_URL
 
-# 数据库引擎
-engine = create_engine(DATABASE_URL)
 
-# 数据库会话
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# 创建异步引擎
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+# 创建异步会话
+async_session = sessionmaker(
+    engine, expire_on_commit=False, class_=AsyncSession
+)

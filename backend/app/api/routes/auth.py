@@ -1,27 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException
-from jose import JWTError
-from sqlalchemy.orm import Session
-from app.db.session import SessionLocal
+from sqlalchemy.future import select
 from app.dependencies import get_current_biz_user, get_current_user
 from app.models.models import User, Biz
 from app.services.auth_service import verify_password, create_access_token
 from app.schemas.schemas import BizToken, LoginRequest, Token, UserToken
 from datetime import timedelta
-
+from app.db.session import async_session
+from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
 # 依赖注入：获取数据库会话
-def get_db():
-    db = SessionLocal()
-    try:
+async def get_db():
+    """
+    获取异步数据库会话对象。
+    """
+    async with async_session() as db:
         yield db
-    finally:
-        db.close()
 
 # 用户登录
 @router.post("/login/user", response_model=Token)
-def user_login(login: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == login.username).first()
+async def user_login(login: LoginRequest, db: AsyncSession = Depends(get_db)):
+    result =await db.execute(select(User).filter(User.username == login.username))
+    user =  result.scalars().first()
     if not user or not verify_password(login.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": user.username,"role": "user"}, expires_delta=timedelta(minutes=30))
@@ -29,8 +29,9 @@ def user_login(login: LoginRequest, db: Session = Depends(get_db)):
 
 # 企业用户登录
 @router.post("/login/biz", response_model=Token)
-def biz_login(login: LoginRequest, db: Session = Depends(get_db)):
-    biz = db.query(Biz).filter(Biz.biz_name == login.username).first()
+async def biz_login(login: LoginRequest, db: AsyncSession = Depends(get_db)):
+    result =await db.execute(select(Biz).filter(Biz.biz_name == login.username))
+    biz =  result.scalars().first()
     if not biz or not verify_password(login.password, biz.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token(data={"sub": biz.biz_name,"role": "biz"}, expires_delta=timedelta(minutes=30))

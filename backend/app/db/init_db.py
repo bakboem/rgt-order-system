@@ -1,68 +1,77 @@
-from sqlalchemy.orm import Session
+# app/db/init_db.py
+
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import inspect
-from app.db.session import engine, SessionLocal
+from app.db.session import engine, async_session
 from app.models.models import User, Biz
 from app.services.auth_service import get_password_hash
-
-# 初始化数据库：创建表
-def init_db():
+from app.db.base import Base
+from sqlalchemy import text
+async def init_db():
     """
-    初始化数据库，创建缺失的表并插入初始数据。
+    异步初始化数据库，创建缺失的表并插入初始数据。
     """
-    # 检查当前数据库中的表
-    inspector = inspect(engine)
-    existing_tables = set(inspector.get_table_names())  # 已有表
-    print("Existing tables in database:", existing_tables)
+    async with engine.begin() as conn:
+        # 定义一个同步函数，包含所有同步操作
+        def sync_operations(sync_conn):
+            inspector = inspect(sync_conn)
+            existing_tables = set(inspector.get_table_names())
 
-    # 创建缺失的表
-    from app.db.base import Base
-    Base.metadata.create_all(bind=engine)
+            # 创建缺失的表
+            Base.metadata.create_all(sync_conn)
 
-    # 再次检查数据库表，获取最新的表列表
-    updated_tables = set(inspector.get_table_names())
-    new_tables = updated_tables - existing_tables
+            updated_tables = set(inspector.get_table_names())
+            new_tables = updated_tables - existing_tables
 
-    # 打印新创建的表
-    if new_tables:
-        print("New tables created:", new_tables)
-    else:
-        print("No new tables were created. All tables already exist.")
+            return existing_tables, new_tables
+
+        # 使用 run_sync 执行同步函数
+        existing_tables, new_tables = await conn.run_sync(sync_operations)
+
+        print("Existing tables in database:", existing_tables)
+        if new_tables:
+            print("New tables created:", new_tables)
+        else:
+            print("No new tables were created. All tables already exist.")
 
     # 插入初始数据
-    with SessionLocal() as db:  # 确保会话管理正确
-        insert_initial_data(db)
+    async with async_session() as session:
+        await insert_initial_data(session)
 
-# 插入初始数据
-def insert_initial_data(db: Session):
+
+async def insert_initial_data(session: AsyncSession):
     """
-    插入初始用户和企业数据。
+    异步插入初始用户和企业数据。
     """
-    # 初始用户数据
     initial_users = [
         {"username": "rgt1", "password": "rgt1"},
         {"username": "rgt2", "password": "rgt2"}
     ]
 
-    # 检查并插入用户数据
     for user_data in initial_users:
-        if not db.query(User).filter(User.username == user_data["username"]).first():
+        result = await session.execute(
+            text("SELECT 1 FROM users_table WHERE username=:username"),
+            {"username": user_data["username"]}
+        )
+        if not result.scalar():
             hashed_password = get_password_hash(user_data["password"])
             user = User(username=user_data["username"], hashed_password=hashed_password)
-            db.add(user)
+            session.add(user)
 
-    # 初始企业数据
     initial_bizs = [
         {"biz_name": "biz1", "password": "biz1"},
         {"biz_name": "biz2", "password": "biz2"}
     ]
 
-    # 检查并插入企业数据
     for biz_data in initial_bizs:
-        if not db.query(Biz).filter(Biz.biz_name == biz_data["biz_name"]).first():
+        result = await session.execute(
+            text("SELECT 1 FROM biz_table WHERE biz_name=:biz_name"),
+           {"biz_name": biz_data["biz_name"]}
+        )
+        if not result.scalar():
             hashed_password = get_password_hash(biz_data["password"])
             biz = Biz(biz_name=biz_data["biz_name"], hashed_password=hashed_password)
-            db.add(biz)
+            session.add(biz)
 
-    # 提交数据
-    db.commit()
+    await session.commit()
     print("Initial data inserted successfully.")

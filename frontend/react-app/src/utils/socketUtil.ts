@@ -34,7 +34,6 @@ class SocketUtils {
       const response = await apiRequest<UserResponseModel>(
         ApiRequestType.WHOAMI_USER,
       );
-      console.log(response);
       if (response) {
         console.log(' successful:', response.id);
         return response;
@@ -61,5 +60,7 @@ class SocketUtils {
     }
     return null;
   }
+
+  
 }
 export default SocketUtils;
