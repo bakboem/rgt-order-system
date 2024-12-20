@@ -46,7 +46,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\":\"biz1\",\n    \"password\":\"biz1\"\n}",
+					"raw": "{\n    \"username\":\"biz2\",\n    \"password\":\"biz2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -67,22 +67,10 @@
 			"response": []
 		},
 		{
-			"name": "order/all/forBiz",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "order/all/for/biz",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "{{baseURL}}order/all/for/biz",
 					"host": [
@@ -98,7 +86,125 @@
 			"response": []
 		},
 		{
-			"name": "order/all/forUser",
+			"name": "order/all/for/user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}order/all/for/user",
+					"host": [
+						"{{baseURL}}order"
+					],
+					"path": [
+						"all",
+						"for",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/add",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"맛생선\",\n    \"image_url\":\"\",\n    \"price\":14400.0,\n    \"stock\":10\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}menu/add",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/update/{id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"영양갱4\",\n    \"image_url\":\"\",\n    \"price\":1000.0\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}menu/update/b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"update",
+						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/update/stock/{id}",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quantity\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}menu/update/stock/b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"update",
+						"stock",
+						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/{id}/stock",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}menu/b37b2fb7-dde3-4ec3-91f3-fa2f69329384/stock",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+						"stock"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/all/for/user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -107,7 +213,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\":\"biz1\",\n    \"password\":\"biz1\"\n}",
+					"raw": "{\n    \"name\":\"영양갱\",\n    \"image_url\":\"\",\n    \"price\":2500.0,\n    \"stock\":10\n\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -115,13 +221,168 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}order/all/forUser",
+					"raw": "{{baseURL}}menu/all",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/all/for/biz",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"영양갱\",\n    \"image_url\":\"\",\n    \"price\":2500.0,\n    \"stock\":10\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}menu/all/for/biz",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"all",
+						"for",
+						"biz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/biz/info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}auth/biz/info",
+					"host": [
+						"{{baseURL}}auth"
+					],
+					"path": [
+						"biz",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/add",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"menu_id\":\"b37b2fb7-dde3-4ec3-91f3-fa2f69329384\",\n        \"quantity\":3\n    }\n  \n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}order/add",
 					"host": [
 						"{{baseURL}}order"
 					],
 					"path": [
-						"all",
-						"forUser"
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/update/{id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"state\":\"complete\" // waiting pending complate \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}order/update/1a6fd89f-e33e-4a6f-a2df-df378c07d1cb",
+					"host": [
+						"{{baseURL}}order"
+					],
+					"path": [
+						"update",
+						"1a6fd89f-e33e-4a6f-a2df-df378c07d1cb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order/delete/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}order/delete/92eaf06d-fea2-4d7c-86bc-d3ad29b76ca7",
+					"host": [
+						"{{baseURL}}order"
+					],
+					"path": [
+						"delete",
+						"92eaf06d-fea2-4d7c-86bc-d3ad29b76ca7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/delete/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}menu/delete/c04b651f-564c-4221-8ca3-1dd1b78dc710",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"delete",
+						"c04b651f-564c-4221-8ca3-1dd1b78dc710"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/user/info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}auth/user/info",
+					"host": [
+						"{{baseURL}}auth"
+					],
+					"path": [
+						"user",
+						"info"
 					]
 				}
 			},
@@ -133,7 +394,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiaXoxIiwicm9sZSI6ImJpeiIsImV4cCI6MTczNDUzMjg0OH0.msxED1Ni4eR18CNuI_H-X4ejCI_8kAP0OagTCWDV3ug",
+				"value": "{{access_token}}",
 				"type": "string"
 			}
 		]
@@ -155,18 +416,27 @@
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
-					"// Check if the response contains the access_token",
+					"// Check if the response contains the access_token and it's not empty",
 					"if (pm.response.code === 200) {",
 					"    var jsonResponse = pm.response.json();",
 					"    var token = jsonResponse.access_token;",
 					"",
-					"    // Set the token in the authorization header",
-					"    pm.environment.set(\"access_token\", token);",
-					"    pm.request.headers.add({",
-					"        key: 'Authorization',",
-					"        value: 'Bearer ' + token",
-					"    });",
-					"    console.log(\"Token set successfully!\");",
+					"    // Only set the token if it is not empty and not already set in the environment",
+					"    if (token && token !== pm.environment.get(\"access_token\")) {",
+					"        pm.environment.set(\"access_token\", token);",
+					"        console.log(\"Token set successfully!\");",
+					"    } else {",
+					"        console.log(\"No new token or token is unchanged.\");",
+					"    }",
+					"",
+					"    // Automatically add the token to the Authorization header for future requests",
+					"    if (token) {",
+					"        pm.request.headers.add({",
+					"            key: 'Authorization',",
+					"            value: 'Bearer ' + token",
+					"        });",
+					"    }",
+					"",
 					"} else {",
 					"    console.log(\"Error: No access token received\");",
 					"}",
@@ -179,6 +449,11 @@
 		{
 			"key": "baseURL",
 			"value": "http://localhost:8000/",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "aaa",
 			"type": "string"
 		}
 	]
