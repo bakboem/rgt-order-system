@@ -90,12 +90,11 @@ def get_all_orders_for_biz(db: Session = Depends(get_db), current_user: BizToken
 
     return orders_with_details
 
-
 @router.post("/add", response_model=dict)
 async def add_orders(
     orders: list[OrderCreate],
     db: Session = Depends(get_db),
-    current_user: UserToken = Depends(get_current_user)
+    current_user: UserToken = Depends(get_current_user),
 ):
     new_orders = []
 
@@ -126,12 +125,12 @@ async def add_orders(
 
     for new_order in new_orders:
         message = {
-            "menu_id": str(new_order.menu_id),
+            "menu_id": new_order.menu_id,  # 直接使用字段，无需 str()
             "quantity": new_order.quantity,
-            "user_id": str(new_order.user_id),
-            "biz_id": str(new_order.biz_id)
+            "user_id": new_order.user_id,  # 直接使用字段，无需 str()
+            "biz_id": new_order.biz_id,  # 直接使用字段，无需 str()
         }
-    await websocket_service.broadcast_biz_order_update(new_order.biz_id, json.dumps(message))
+        await websocket_service.broadcast_biz_order_update(new_order.biz_id, message)  # FastAPI 会自动序列化为 JSON
 
     return {"message": "success"}
 
@@ -187,11 +186,11 @@ async def update_order_status(
 
     # 广播状态更新到用户和企业
     user_message = {
-        "order_id": str(order_id),
+        "order_id": order_id,
         "state": order_update.state
     }
     biz_message = {
-        "order_id": str(order_id),
+        "order_id":order_id,
         "state": order_update.state
     }
 

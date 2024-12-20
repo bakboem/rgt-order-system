@@ -20,6 +20,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 # 用户认证依赖
 def get_current_user(token: str = Depends(oauth2_scheme_user), db: Session = Depends(get_db)) -> UserToken:
     try:
@@ -31,12 +32,10 @@ def get_current_user(token: str = Depends(oauth2_scheme_user), db: Session = Dep
         user = db.query(User).filter(User.username == username).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-
         # 确保返回的 UserToken 包含 name 字段
-        return UserToken(id=str(user.id), name=user.username, role=role)  # name 应该是用户的用户名
+        return UserToken(id=user.id, name=user.username, role=role)  # name 应该是用户的用户名
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-
 
 
 def get_current_biz_user(token: str = Depends(oauth2_scheme_biz), db: Session = Depends(get_db)) -> BizToken:
@@ -52,7 +51,7 @@ def get_current_biz_user(token: str = Depends(oauth2_scheme_biz), db: Session = 
         biz = db.query(Biz).filter(Biz.biz_name == biz_name).first()
         if not biz:
             raise HTTPException(status_code=404, detail="Enterprise user not found")
-        return BizToken(id=str(biz.id), biz_name=biz.biz_name, role=role)
+        return BizToken(id=biz.id, biz_name=biz.biz_name, role=role)
     except JWTError as e:
         print(f"JWTError: {str(e)}")  # 打印异常信息
         raise HTTPException(status_code=401, detail="Invalid token")

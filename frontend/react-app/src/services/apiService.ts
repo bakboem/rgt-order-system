@@ -193,9 +193,7 @@ export async function apiRequest<T>(
 
     if (hooks?.onResponseSuccess) {
       await hooks.onResponseSuccess(response);
-    } else {
-      console.log('Request succeeded:', response);
-    }
+    } 
 
     return result;
   } catch (error) {

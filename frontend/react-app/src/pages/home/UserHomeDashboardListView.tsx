@@ -4,7 +4,7 @@ import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, Tabl
 import CustomColumnHolder from '../../commonView/customColumnHolder';
 import { s_full } from '../../style/size';
 import { defaultContainerColumnSx } from '../../style/sx/containerSx';
-import { as_center } from '../../style/align';
+import { as_center, as_start } from '../../style/align';
 interface CustomOpderProos {
   data: OrderResponseModel[]; // 菜单项文本列表
 }
@@ -12,7 +12,7 @@ interface CustomOpderProos {
 const UserHomeDashboardListView:React.FC<CustomOpderProos> = ({data}) => {
     return (
         <Box sx={{ ...defaultContainerColumnSx, width: s_full ,  alignItems: as_center,
-                justifyContent: as_center,}}>
+                justifyContent: as_start,}}>
           <TableContainer
             component={Paper}
             sx={{ border: '1px solid #ccc', borderRadius: '8px' }}

@@ -6,9 +6,9 @@ import {
   login_route_name_for_user,
   login_route_name_for_biz,
   splashPage,
-  userTokenName,
   entryPage,
 } from '../../config/statics';
+import { isActiveBiz, isActiveUser } from '../../utils/tokenUtils';
 
 const EntryPage: React.FC = () => {
   const location = useLocation();
@@ -23,8 +23,7 @@ const EntryPage: React.FC = () => {
     }
     const isCurrentUrl =  window.location.pathname=== entryPage;
     if (target === 'user'&& isCurrentUrl ) {
-      const userToken = sessionStorage.getItem(userTokenName);
-      if (userToken) {
+      if (isActiveUser()) {
         console.log('Home page User');
         navigate(home_route_name_for_user);
       } else {
@@ -32,8 +31,7 @@ const EntryPage: React.FC = () => {
         navigate(login_route_name_for_user);
       }
     } else if (target === 'biz'&& isCurrentUrl) {
-      const bizToken = sessionStorage.getItem('bizToken');
-      if (bizToken) {
+      if (isActiveBiz()) {
         console.log('Home page Biz');
         navigate(home_route_name_for_biz);
       } else {

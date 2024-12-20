@@ -47,7 +47,7 @@ const UserHomeMenuTableView: React.FC<MenuTableListViewProps> = ({ data }) => {
 
   const submmitButtonText = '주문';
   return (
-    <Box sx={{ ...defaultContainerColumnSx, width: s_full }}>
+    <Box sx={{ ...defaultContainerColumnSx, width: s_full ,height :"300px" }}>
       <TableContainer
         component={Paper}
         sx={{ border: '1px solid #ccc', borderRadius: '8px' }}

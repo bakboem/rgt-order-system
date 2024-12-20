@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isTokenValid } from '../../utils/tokenUtils';
+import { isActiveBiz } from '../../utils/tokenUtils';
 import { login_route_name_for_biz } from '../../config/statics';
 import ChangePageContents from '../login/ChangePageContents';
 import HomeTabBarView from './HomeTabBarView';
@@ -12,16 +13,13 @@ import Box from '@mui/material/Box/Box';
 const BizHome: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const bizToken = sessionStorage.getItem('bizToken');
-    const activeToken = sessionStorage.getItem("activeToken");
-    if (!(bizToken && isTokenValid(bizToken)&& (bizToken===activeToken) )) {
+    if (!isActiveBiz()) {
       navigate(login_route_name_for_biz);
     }
-  });
-
+  },[]);
+  
   
   const layoutConfigs = {
-    
     areas: [
       {
         content: <ChangePageContents />,
