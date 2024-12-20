@@ -71,18 +71,12 @@ The backend uses in-memory data storage with the following structures:
 ```
 
 ## Infrastructure and CI/CD Integration
-- **Terraform** is utilized for defining and managing the infrastructure as code, including VPC, EC2 instances, RDS, and security groups.
-- Key highlights of CI/CD integration with **GitHub Actions**:
-  - Automated workflows validate Terraform configurations, ensuring accuracy and stability before deployment.
-  - **Dynamic IP management**: Automatically updates Route53 DNS records to handle EC2 instance changes.
-  - Secrets and parameters (e.g., database credentials, API keys) are securely managed using **AWS SSM Parameter Store**.
-  - Ansible playbooks are executed from a Bastion host for seamless configuration management of instances.
-  - Supports zero-downtime deployment strategies with safe rollbacks.
-- **Deployment flow**:
-  1. **Terraform Plan and Apply**: Validates and provisions infrastructure.
-  2. **Build and Test**: Builds the backend and frontend applications and runs unit tests.
-  3. **Deploy**: Deploys the updated applications to the target environment.
-  4. **Post-Deployment Validation**: Runs health checks and smoke tests to ensure stability.
-  5. **Notification**: Sends status updates to the team via Slack or email.
-
-This approach improves maintainability, reduces manual efforts, ensures consistency across deployments, and supports high availability and scalability.
+- **Terraform** is utilized for defining and managing the infrastructure as code, including VPC, EC2 instances, and security groups.
+- Integrated **GitHub Actions** for a streamlined CI/CD pipeline, automating the deployment and infrastructure updates:
+  - Validates Terraform configuration and plans changes.
+  - Automatically provisions or updates infrastructure.
+  - Deploys the latest backend and frontend code after successful tests.
+  - Dynamic handling of instance roles and configurations via SSM parameters.
+  - Ensures zero-downtime deployment and rollback strategies.
+  
+This approach improves maintainability, reduces manual efforts, and ensures consistency across deployments.
