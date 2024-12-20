@@ -1,3 +1,5 @@
+import asyncio
+import json
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
@@ -8,7 +10,6 @@ from uuid import UUID
 from app.services.socket_service import websocket_service
 router = APIRouter()
 
-# 依赖注入：获取数据库会话
 def get_db():
     db = SessionLocal()
     try:
@@ -16,13 +17,11 @@ def get_db():
     finally:
         db.close()
 
-# 获取当前用户所有的订单
 @router.get("/all/for/user", response_model=list[OrderResponse])
 def get_all_orders_for_user(db: Session = Depends(get_db), current_user: UserToken = Depends(get_current_user)):
     user_id = current_user.id
     orders = db.query(Order).filter(Order.user_id == user_id, Order.state != "completed").all()  
 
-    # 填充每个订单的详细信息
     orders_with_details = []
     for order in orders:
         menu = db.query(Menu).filter(Menu.id == order.menu_id).first()
@@ -93,8 +92,11 @@ def get_all_orders_for_biz(db: Session = Depends(get_db), current_user: BizToken
 
 
 @router.post("/add", response_model=dict)
-def add_orders(orders: list[OrderCreate], db: Session = Depends(get_db), current_user: UserToken = Depends(get_current_user)):
-    # 只保存订单，返回成功信息
+async def add_orders(
+    orders: list[OrderCreate],
+    db: Session = Depends(get_db),
+    current_user: UserToken = Depends(get_current_user)
+):
     new_orders = []
 
     for order in orders:
@@ -109,7 +111,6 @@ def add_orders(orders: list[OrderCreate], db: Session = Depends(get_db), current
         if instock.stock_quantity < order.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for menu id {order.menu_id}")
 
-        # 创建订单
         new_order = Order(
             menu_id=order.menu_id, 
             quantity=order.quantity, 
@@ -118,16 +119,30 @@ def add_orders(orders: list[OrderCreate], db: Session = Depends(get_db), current
         )
         new_orders.append(new_order)
 
-        # 更新库存
         instock.stock_quantity -= order.quantity
 
     db.add_all(new_orders)
     db.commit()
+
+    for new_order in new_orders:
+        message = {
+            "menu_id": str(new_order.menu_id),
+            "quantity": new_order.quantity,
+            "user_id": str(new_order.user_id),
+            "biz_id": str(new_order.biz_id)
+        }
+    await websocket_service.broadcast_biz_order_update(new_order.biz_id, json.dumps(message))
+
     return {"message": "success"}
 
 
 @router.put("/update/{order_id}", response_model=OrderResponse)
-async def update_order_status(order_id: UUID, order_update: OrderUpdate, db: Session = Depends(get_db)):
+async def update_order_status(
+    order_id: UUID,
+    order_update: OrderUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserToken = Depends(get_current_biz_user)
+):
     """更新订单状态并返回更新后的订单信息"""
     
     # 查找订单
@@ -135,18 +150,23 @@ async def update_order_status(order_id: UUID, order_update: OrderUpdate, db: Ses
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
+    # 验证权限
+    if order.biz_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Unauthorized to update this order")
+    
     # 更新订单状态
-    order.state = order_update.state  # 使用 `state` 而不是 `status`
+    order.state = order_update.state
     db.commit()
+    db.refresh(order)
 
-    # 获取菜单和用户信息
+    # 获取关联的菜单和用户信息
     menu = db.query(Menu).filter(Menu.id == order.menu_id).first()
     user = db.query(User).filter(User.id == order.user_id).first()
 
     if not menu or not user:
         raise HTTPException(status_code=404, detail="Menu or User not found")
 
-    # 构建订单响应数据
+    # 准备响应数据
     order_response = OrderResponse(
         id=order.id,
         state=order.state,
@@ -165,21 +185,29 @@ async def update_order_status(order_id: UUID, order_update: OrderUpdate, db: Ses
         user_name=user.username
     )
 
-    # 广播订单更新通知给用户和企业
-    await websocket_service.broadcast_user_order_update(order.user_id, f"Your order {order_id} is now {order_update.state}")
-    await websocket_service.broadcast_biz_order_update(order.biz_id, f"Order {order_id} status updated to {order_update.state}")
+    # 广播状态更新到用户和企业
+    user_message = {
+        "order_id": str(order_id),
+        "state": order_update.state
+    }
+    biz_message = {
+        "order_id": str(order_id),
+        "state": order_update.state
+    }
 
-    return order_response  # 返回更新后的订单数据
+    await websocket_service.broadcast_user_order_update(order.user_id, user_message)
+    await websocket_service.broadcast_biz_order_update(order.biz_id, biz_message)
+
+    return order_response
+
 
 @router.delete("/delete/{order_id}", response_model=dict)
 def delete_order(order_id: UUID, db: Session = Depends(get_db)):
-    # 查询是否存在该订单
     order = db.query(Order).filter(Order.id == order_id).first()
 
     if not order:
         raise HTTPException(status_code=404, detail=f"Order with id {order_id} not found")
     
-    # 删除订单
     db.delete(order)
     db.commit()
 

@@ -1,4 +1,3 @@
-// EventDispatcher.ts
 type EventCallback = () => void;
 
 const eventMap = new Map<string, Array<(error?: any) => void>>();
