@@ -1,106 +1,88 @@
 #### This is a skill test question before an interview, from RGT company
 
-### **Order Management System**
-This is a comprehensive full-stack order management system built using **React** for the frontend and **FastAPI** for the backend. It provides role-based features for users and businesses, enabling real-time interactions via WebSocket and robust RESTful API services for seamless operation.
+# Order Management System
+This is a full-stack order management system built with React for the frontend and FastAPI for the backend. The system supports both user and business roles, enabling real-time order updates using WebSocket and providing essential RESTful API services.
 
----
+## User Features
+- User login with **JWT-based authentication**
+- View the menu of food items from different businesses.
+- Place orders with a specified quantity and submit them to the backend.
+- Real-time order tracking via **WebSocket**, with live updates on status
+- Ability to cancel orders that have not yet been accepted.
 
-### **User Features**
-- **Authentication**: Secure user login with **JWT-based authentication**.
-- **Menu Browsing**: View menus and items offered by various businesses.
-- **Order Placement**: Submit orders with specified quantities while ensuring stock availability.
-- **Real-Time Updates**: Track order status in real time using WebSocket notifications.
-- **Order Management**: Cancel orders that are in a pending state.
+## Biz Features
+- Biz login with **JWT-based authentication**
+- View all incoming orders and their statuses (e.g., pending, accepted, processing, completed).
+- Accept and update order statuses with a single click.
+- Real-time notifications for new orders through WebSocket subscriptions.
+- Manage menus and inventory levels.
 
----
+## Backend Features
+- RESTful API implementation for core functionalities:
+  - /user_login: User authentication
+  - /business_login: Biz authentication.
+  - /order: Place a new order with validation.
+  - /cancel_order: Cancel pending orders.
+  - /get_orders: Retrieve orders for a specific business.
+  - /set-menu-and-instore: Update menus and inventory.
+- WebSocket server for full-duplex real-time messaging.
+- Simulated kitchen automation to process orders:
+  - Concurrently process up to 2 orders at a time.
+  - Fixed 10-second preparation time for each order.
+  - The quantity cannot be negative or out of stock
 
-### **Business Features**
-- **Authentication**: Secure business login using **JWT-based authentication**.
-- **Order Dashboard**: View all incoming orders categorized by their statuses (e.g., pending, accepted, processing, completed).
-- **Order Actions**: Accept and update order statuses with instant feedback.
-- **WebSocket Notifications**: Receive real-time updates for new orders via WebSocket.
-- **Inventory Management**: Manage menu items and their stock levels through a user-friendly interface.
-
----
-
-### **Backend Features**
-- **RESTful APIs**: Supports the following operations:
-  - **User Authentication**: `/user_login` endpoint for JWT-based authentication.
-  - **Business Authentication**: `/business_login` endpoint for JWT-based authentication.
-  - **Order Management**: Endpoints for placing, updating, and canceling orders.
-  - **Menu and Inventory**: Endpoints for managing menus and inventory.
-  - **Order Retrieval**: Endpoints for retrieving orders based on user or business roles.
-- **WebSocket Server**: Enables real-time, bidirectional communication for order updates and notifications.
-- **Order Processing Automation**:
-  - Simulates a kitchen system that processes up to two orders concurrently.
-  - Fixed preparation time of 10 seconds per order.
-  - Handles inventory checks to ensure no negative stock levels or invalid requests.
-
----
-
-### **Database Design**
-The backend uses a **PostgreSQL** database with the following schema:
-
-#### **Users Table**
-```json
+## Data Management
+The backend uses in-memory data storage with the following structures:
+### Users Table:
+```
 {
-  "id": "UUID",
-  "username": "string",
-  "hashed_password": "encrypted"
+  "u_id": "UUID",
+  "u_name": "string",
+  "u_password": "encrypted"
+}
+```
+### Biz Table:
+```
+{
+  "e_id": "UUID",
+  "e_name": "string",
+  "e_password": "encrypted"
+}
+```
+### Menus Table:
+```
+{
+  "m_id": "UUID",
+  "m_name": "string",
+  "m_img_url": "string",
+  "m_price": "double",
+  "m_instore": "int"
+}
+```
+### Orders Table:
+```
+{
+  "o_id": "UUID",
+  "o_state": "string",
+  "e_id": "UUID",
+  "m_id": "UUID",
+  "u_id": "UUID"
 }
 ```
 
-#### **Businesses Table**
-```json
-{
-  "id": "UUID",
-  "biz_name": "string",
-  "hashed_password": "encrypted"
-}
-```
+## Infrastructure and CI/CD Integration
+- **Terraform** is utilized for defining and managing the infrastructure as code, including VPC, EC2 instances, RDS, and security groups.
+- Key highlights of CI/CD integration with **GitHub Actions**:
+  - Automated workflows validate Terraform configurations, ensuring accuracy and stability before deployment.
+  - **Dynamic IP management**: Automatically updates Route53 DNS records to handle EC2 instance changes.
+  - Secrets and parameters (e.g., database credentials, API keys) are securely managed using **AWS SSM Parameter Store**.
+  - Ansible playbooks are executed from a Bastion host for seamless configuration management of instances.
+  - Supports zero-downtime deployment strategies with safe rollbacks.
+- **Deployment flow**:
+  1. **Terraform Plan and Apply**: Validates and provisions infrastructure.
+  2. **Build and Test**: Builds the backend and frontend applications and runs unit tests.
+  3. **Deploy**: Deploys the updated applications to the target environment.
+  4. **Post-Deployment Validation**: Runs health checks and smoke tests to ensure stability.
+  5. **Notification**: Sends status updates to the team via Slack or email.
 
-#### **Menus Table**
-```json
-{
-  "id": "UUID",
-  "name": "string",
-  "image_url": "string",
-  "price": "float",
-  "stock_quantity": "int",
-  "biz_id": "UUID"
-}
-```
-
-#### **Orders Table**
-```json
-{
-  "id": "UUID",
-  "state": "string",
-  "biz_id": "UUID",
-  "menu_id": "UUID",
-  "user_id": "UUID",
-  "quantity": "int"
-}
-```
-
----
-
-### **Real-Time System Features**
-- **WebSocket Integration**: 
-  - Users are notified of order status changes instantly.
-  - Businesses receive real-time updates for new orders.
-- **Concurrency**: Backend supports concurrent WebSocket connections and concurrent order processing for efficient operations.
-- **Error Handling**: Ensures that invalid requests are rejected with meaningful error messages.
-
----
-
-### **Technical Highlights**
-- **Frontend**: Developed with **React** and uses **Material-UI** for responsive and intuitive UI components.
-- **Backend**: Built with **FastAPI** to deliver high performance and scalability.
-- **Database**: Uses **PostgreSQL** for reliable data storage.
-- **Authentication**: JWT implementation for secure role-based access.
-- **Real-Time Communication**: Powered by WebSocket for dynamic interactions.
-
---- 
-
-This system offers a robust solution for managing orders, ensuring real-time efficiency and smooth operations for both users and businesses.
+This approach improves maintainability, reduces manual efforts, ensures consistency across deployments, and supports high availability and scalability.
