@@ -5,29 +5,46 @@ import socketService from '../../services/socketService';
 import timerService from '../../services/timerService';
 import { useRequestOrderList } from '../../state/homePageState/hooks';
 import UserHomeDashboardListView from './UserHomeDashboardListView';
-import handleMessage from '../../utils/messageHandle'
+
 const UserHomeContentsDashboard: React.FC = () => {
   //  const isFetching = useRef(false);
    const { orders, requestOrder } = useRequestOrderList();
 
-  useEffect(() => {
+   useEffect(() => {
+    let isUnmounted = false;
+    // 初始化
+    const initializeSocket = async () => {
+      try {
+        const socketUrl = await SocketUtils.getSocketUrl();
+        socketService.connect(socketUrl);
+  
+        // 启动心跳检测
+        timerService.start(async () => {
+          if (!isUnmounted) {
+            const isAlive = await socketService.checkAlive();
+            if (!isAlive) {
+              console.warn("WebSocket connection lost, attempting to reconnect...");
+              socketService.disconnect();
+              socketService.connect(socketUrl); // 自动重连
+            }
+          }
+        }, 10000); // 每 10 秒检测一次
+      } catch (error) {
+        console.error("Failed to initialize WebSocket:", error);
+      }
+    };
+  
+    initializeSocket();
     requestOrder()
-    // 连接 WebSocket
-    SocketUtils.getSocketUrl().then((socketUrl) => {
-      socketService.connect(socketUrl); // 替换为你的后端 WebSocket URL
-      // 监听消息事件
-      socketService.onMessage((message: string) => {
-        handleMessage(message);
-      });
-    });
-    timerService.start(async () => {
-     await socketService.checkAlive();
-    }, 10000); 
+  
+    // 清理资源
     return () => {
+      isUnmounted = true;
       timerService.clear();
       socketService.disconnect();
     };
   }, []);
+  
  
   return (
     <UserHomeDashboardListView data={orders}/>

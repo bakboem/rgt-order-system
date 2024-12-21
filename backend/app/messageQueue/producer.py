@@ -2,6 +2,7 @@ import asyncio
 import aio_pika
 import logging
 import json
+import uuid  # 用于生成唯一的 message_id
 from app.messageQueue.connection import RabbitMQConnection
 
 logger = logging.getLogger("RabbitMQProducer")
@@ -32,24 +33,33 @@ class RabbitMQProducer:
         """
         try:
             channel = await RabbitMQConnection.get_channel()
+
+            # 启用发布确认
+            await channel.set_qos(prefetch_count=1)  # 设置 QoS，确保消息可靠传递
             exchange = await channel.get_exchange(self.exchange_name)
             logger.info(f"Connected to exchange '{self.exchange_name}'.")
 
             if delay > 0:
                 await asyncio.sleep(delay)
 
+            # 生成唯一 message_id
+            message_id = str(uuid.uuid4())
+
             # 将字典转换为 JSON 字符串
             message_body = json.dumps(message)
-            logger.info(f"&&&&&&&&&Publishing message to routing_key '{routing_key}': {message_body}")
+            logger.info(f"Publishing message to routing_key '{routing_key}': {message_body} (message_id={message_id})")
 
-            await exchange.publish(
-                aio_pika.Message(
-                    body=message_body.encode('utf-8'),
-                    delivery_mode=aio_pika.DeliveryMode.PERSISTENT
-                ),
-                routing_key=routing_key,
+            # 创建消息对象，附加 message_id
+            msg = aio_pika.Message(
+                body=message_body.encode('utf-8'),
+                delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
+                message_id=message_id,  # 添加唯一 message_id
             )
-            logger.info(f"Message published to routing_key '{routing_key}': {message_body}")
+
+            # 发布消息
+            await exchange.publish(msg, routing_key=routing_key)
+
+            logger.info(f"Message published successfully to routing_key '{routing_key}': {message_body} (message_id={message_id})")
         except Exception as e:
             logger.error(f"Failed to publish message to RabbitMQ: {e}")
 

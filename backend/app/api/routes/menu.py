@@ -133,6 +133,7 @@ async def update_menu(menu_id: UUID, menu: MenuUpdate, db: AsyncSession = Depend
             "name":existing_menu.name,
             "image_url":existing_menu.image_url,
             "price":existing_menu.price,
+            "biz_id":str(existing_menu.biz_id),
             "instock":existing_menu.stock_quantity if hasattr(existing_menu, 'stock_quantity') else None
            }
         ]
