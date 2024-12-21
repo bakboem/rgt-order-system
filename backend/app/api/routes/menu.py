@@ -4,11 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import async_session
 from app.models.models import Instock, Menu,Order,SaleTracking
-from app.schemas.schemas import MenuCreate,BizToken,InstockUpdate, MenuResponse, MenuUpdate,MenuWithStock,StockUpdateRequest
+from app.schemas.schemas import MenuCreate,BizToken,InstockUpdate, MenuMessage, MenuResponse, MenuUpdate,MenuWithStock,StockUpdateRequest, WebSocketMessage
 from app.dependencies import get_current_biz_user, get_current_user  
 from uuid import UUID
 from datetime import datetime
 from fastapi import HTTPException
+from sqlalchemy.orm import joinedload
 from app.messageQueue.producer import rabbitmq_producer
 router = APIRouter()
 
@@ -78,18 +79,23 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
     await db.refresh(instock)
     
     # RabbitMQ 广播菜单新增消息
+      # RabbitMQ 广播菜单新增消息
     message = {
-        "type": "menu_add",
-        "data": {
-            "id": str(new_menu.id),
-            "name": new_menu.name,
-            "image_url": new_menu.image_url,
-            "price": new_menu.price,
-            "stock": instock.stock_quantity,
-            "biz_id": str(new_menu.biz_id)
+            "type":"menu_add",
+            "data":[
+                {
+                "id": str(new_menu.id),
+                "name":new_menu.name,
+                "image_url":new_menu.image_url,
+                "price":new_menu.price,
+                "biz_id":str(new_menu.biz_id)
+                }
+            ]
         }
-    }
-    await rabbitmq_producer.publish_message(routing_key="message", message=message)
+    await rabbitmq_producer.publish_message(
+        routing_key="orders",
+        message=message
+    )
     
     return MenuResponse(
         id=new_menu.id,
@@ -97,8 +103,11 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
         image_url=new_menu.image_url,
         price=new_menu.price,
         stock=instock.stock_quantity,
-        status=new_menu.status
+        status=new_menu.status,
+        biz_id = new_menu.biz_id
     )
+
+
 # 更新菜单
 @router.put("/update/{menu_id}", response_model=MenuUpdate)
 async def update_menu(menu_id: UUID, menu: MenuUpdate, db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
@@ -117,16 +126,21 @@ async def update_menu(menu_id: UUID, menu: MenuUpdate, db: AsyncSession = Depend
 
     # RabbitMQ 广播菜单更新消息
     message = {
-        "type": "menu_update",
-        "data": {
+        "type":"menu_update",
+        "data":[
+             {
             "id": str(existing_menu.id),
-            "name": existing_menu.name,
-            "image_url": existing_menu.image_url,
-            "price": existing_menu.price,
-            "biz_id": str(existing_menu.biz_id)
-        }
+            "name":existing_menu.name,
+            "image_url":existing_menu.image_url,
+            "price":existing_menu.price,
+            "instock":existing_menu.stock_quantity if hasattr(existing_menu, 'stock_quantity') else None
+           }
+        ]
     }
-    await rabbitmq_producer.publish_message(routing_key="message", message=message)
+    await rabbitmq_producer.publish_message(
+        routing_key="orders",
+        message=message
+    )
     return existing_menu
 
 
@@ -137,35 +151,41 @@ async def update_stock(
     db: AsyncSession = Depends(get_db),
     current_user: BizToken = Depends(get_current_biz_user),
 ):
-    menu_result = await db.execute(select(Menu).filter(Menu.id == menu_id))
+    menu_result = await db.execute(select(Menu).options(joinedload(Menu.instock)).filter(Menu.id == menu_id))
     menu = menu_result.scalar_one_or_none()
     if not menu:
         raise HTTPException(status_code=404, detail=f"Menu with id {menu_id} not found")
-    
+
     if menu.biz_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to update this menu's stock")
-    
-    stock_result = await db.execute(select(Instock).filter(Instock.menu_id == menu_id))
-    instock = stock_result.scalar_one_or_none()
+
+    instock_result = await db.execute(select(Instock).filter(Instock.menu_id == menu_id))
+    instock = instock_result.scalar_one_or_none()
     if not instock:
         raise HTTPException(status_code=404, detail=f"Instock record for menu {menu_id} not found")
-    
+
     instock.stock_quantity += stock_update.quantity
     sale_record = SaleTracking(menu_id=menu.id, quantity=stock_update.quantity, timestamp=datetime.utcnow())
     db.add(sale_record)
     await db.commit()
     await db.refresh(instock)
 
+
   # RabbitMQ 广播库存更新消息
     message = {
         "type": "stock_update",
-        "data": {
-            "menu_id": str(menu.id),
-            "new_stock": instock.stock_quantity,
-            "biz_id": str(menu.biz_id)
-        }
+        "data": [
+            {
+                "menu_id": str(menu.id),
+                "new_stock": instock.stock_quantity,
+                "biz_id": str(menu.biz_id)
+            }
+        ]
     }
-    await rabbitmq_producer.publish_message(routing_key="message", message=message)
+    await rabbitmq_producer.publish_message(
+        routing_key="orders",
+        message=message
+    )
     return instock
 
 
@@ -188,14 +208,14 @@ async def delete_menu(menu_id: UUID, db: AsyncSession = Depends(get_db), current
     menu = result.scalars().first()
     if not menu:
         raise HTTPException(status_code=404, detail=f"Menu with id {menu_id} not found")
-    
+
     # 检查当前用户是否是该菜单的拥有者
     if menu.biz_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this menu")
-    
+
     # 检查是否有任何状态为 "pending" 的订单
     result = await db.execute(
-        select(Order).filter(Order.id == menu_id,Order.state == "pending")
+        select(Order).filter(Order.id == menu_id, Order.state == "pending")
     )
     pending_orders = result.scalars().all()
     if pending_orders:
@@ -204,5 +224,20 @@ async def delete_menu(menu_id: UUID, db: AsyncSession = Depends(get_db), current
     # 将菜单状态设置为不可用（"unavailable"）
     menu.status = "unavailable"
     await db.commit()
+
+    # RabbitMQ 广播菜单删除消息
+    message = {
+        "type": "menu_delete",
+        "data":[
+             {
+            "menu_id": str(menu.id),
+            "biz_id": str(menu.biz_id)
+        }
+        ]
+    }
+    await rabbitmq_producer.publish_message(
+        routing_key="orders",
+        message=message
+    )
 
     return {"message": f"Menu with id {menu_id} has been successfully deactivated."}

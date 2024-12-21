@@ -45,7 +45,7 @@ async def get_all_orders_for_user(db: AsyncSession = Depends(get_db), current_us
                 name=order.menu.name,
                 price=order.menu.price,
                 stock=order.menu.instock.stock_quantity,  # 获取当前库存
-                image_url=order.menu.image_url,
+                image_url=order.menu.image_url
             ),
             biz_name=order.biz.biz_name,
             user_name=order.user.username
@@ -87,7 +87,7 @@ async def get_all_orders_for_biz(db: AsyncSession = Depends(get_db), current_use
                 name=order.menu.name,
                 price=order.menu.price,
                 stock=order.menu.instock.stock_quantity,  # 获取当前库存
-                image_url=order.menu.image_url,
+                image_url=order.menu.image_url
             ),
             biz_name=order.biz.biz_name,
             user_name=order.user.username
@@ -151,7 +151,7 @@ async def add_orders(
                 name=menu.name,
                 price=menu.price,
                 stock=instock.stock_quantity,
-                image_url=menu.image_url
+                image_url=menu.image_url,
             ),
             biz_name=None,  # 可以额外查询 biz_name 或在广播逻辑中解析
             user_name=current_user.username
@@ -166,7 +166,7 @@ async def add_orders(
 
     # RabbitMQ 广播一次
     await rabbitmq_producer.publish_message(
-        routing_key="message",
+        routing_key="orders",
         message=message.model_dump_json()
     )
     
@@ -225,18 +225,20 @@ async def update_order_status(
         # 准备消息
         message = {
             "type": "order_update",
-            "data": {
+            "data": [
+                {
                 "order_id": str(order.id),
                 "state": order.state,
                 "user_id": str(order.user_id),
                 "biz_id": str(order.biz_id),
             },
+            ]
         }
 
         # 使用 RabbitMQ 广播
         await rabbitmq_producer.publish_message(
-            routing_key="message",
-            message=json.dumps(message),
+            routing_key="orders",
+            message=message
         )
 
     return order_response
@@ -245,12 +247,46 @@ async def update_order_status(
 
 @router.delete("/delete/{order_id}", response_model=dict)
 async def delete_order(order_id: UUID, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Order).filter(Order.id == order_id))
+    # 查询订单
+    result = await db.execute(
+        select(Order).options(joinedload(Order.menu)).filter(Order.id == order_id)
+    )
     order = result.scalars().first()
+
     if not order:
         raise HTTPException(status_code=404, detail=f"Order with id {order_id} not found")
-    
+
+    # 准备广播消息的数据
+    order_response = OrderResponse(
+        id=order.id,
+        state=order.state,
+        quantity=order.quantity,
+        menu_id=order.menu_id,
+        biz_id=order.biz_id,
+        user_id=order.user_id,
+        menu=MenuResponse(
+            id=order.menu.id,
+            name=order.menu.name,
+            image_url=order.menu.image_url,
+            price=order.menu.price,
+            stock=order.menu.stock,
+        ) if order.menu else None,
+        biz_name=order.biz.name if order.biz else None,
+        user_name=order.user.name if order.user else None,
+    )
+
+    # 删除订单
     await db.delete(order)
-    await  db.commit()
+    await db.commit()
+    message = {
+        "type":"order_delete",
+        "data": [order_response.model_dump_json()]
+    }
+
+    # 通过 RabbitMQ 广播消息
+    await rabbitmq_producer.publish_message(
+        routing_key="orders",
+        message= message
+    )
 
     return {"message": f"Order with id {order_id} has been successfully deleted."}

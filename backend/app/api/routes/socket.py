@@ -1,8 +1,10 @@
 import json
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, logger
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from uuid import UUID
 from app.services.socket_service import websocket_service
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 @router.websocket("/user/{user_id}")
 async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):

@@ -1,8 +1,7 @@
+from __future__ import annotations
 from pydantic import BaseModel
 from typing import Optional, Union
 from uuid import UUID
-
-from app.models.models import Instock
 # 登录请求模型
 class LoginRequest(BaseModel):
     username: str
@@ -86,15 +85,6 @@ class StockUpdateRequest(BaseModel):
         orm_mode = True
 
 
-from typing import List, Dict, Any
-from pydantic import BaseModel
-
-class WebSocketMessage(BaseModel):
-    """
-    通用 WebSocket 消息模型
-    """
-    type: str  # 消息类型，比如 'order_add', 'order_update', 'menu_update'
-    data: Union["OrderResponse", "MenuResponse","Instock"] 
 
 
 # 菜单的响应模型
@@ -103,8 +93,15 @@ class MenuResponse(BaseModel):
     name: str
     image_url: Optional[str] = None
     price: float
-    stock: int
+    class Config:
+        orm_mode = True
 
+class MenuMessage(BaseModel):
+    id: UUID
+    name: str
+    image_url: Optional[str] = None
+    price: float
+    biz_id: UUID
     class Config:
         orm_mode = True
 
@@ -122,4 +119,8 @@ class OrderResponse(BaseModel):
 
     class Config:
         orm_mode = True
+class WebSocketMessage(BaseModel):
+    type: str  # 消息类型，比如 'order_add', 'order_update', 'menu_update'
+    data: Union["OrderResponse", "MenuMessage","InstockResponse"] 
+
 

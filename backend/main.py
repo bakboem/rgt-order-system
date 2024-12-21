@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 
     # 启动多个消费者任务
     tasks = [
-        create_task(rabbitmq_consumer.consume_messages("message", rabbitmq_consumer.process_message)),
+        create_task(rabbitmq_consumer.consume_messages("orders_queue", rabbitmq_consumer.process_message)),
     ]
     app.state.consumer_tasks = tasks
 

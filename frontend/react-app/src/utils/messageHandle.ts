@@ -1,7 +1,7 @@
 import { WebSocketMessage } from "../models/models";
 
 const handleOrderUpdate = (data: any) => {
-    console.log(`Order Update:`, data);
+    console.log(`Order Update!!!!:`, data);
 };
 
 const handleMenuAdd = (data: any) => {
@@ -30,12 +30,13 @@ const messageHandlers: { [key: string]: (data: any) => void } = {
 
 export const handleMessage = (rawData: string) => {
     try {
+     
         const message: WebSocketMessage = JSON.parse(rawData);
-
+        console.log(message)
+        console.log("Message type:", typeof message);
         if (!message.type) {
             throw new Error("Message lacks required 'type' field.");
         }
-
         const handler = messageHandlers[message.type];
         if (handler) {
             handler(message.data);
