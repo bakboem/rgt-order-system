@@ -66,6 +66,7 @@ class RabbitMQConsumer:
                     await socket_service.websocket_service.broadcast_biz_order_update(
                         UUID(biz_id), json.dumps(body)
                     )
+                    #
                 else:
                     logger.warning(f"Unknown or incomplete message: {message_type} - {item}")
 
