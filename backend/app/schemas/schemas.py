@@ -11,7 +11,7 @@ class Token(BaseModel):
     access_token: str
 class UserToken(BaseModel):
     id: UUID
-    name: str
+    user_name: str
     role: str
 
 # 企业用户的 Token 模型

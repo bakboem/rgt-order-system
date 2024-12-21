@@ -3,11 +3,9 @@ class TimerService {
     private task: (() => void) | null = null;
 
     public start(task: () => void, interval: number): void {
-     if (this.timerId !== null) {
-        console.warn("A timer task is already running. Skipping initialization.");
-        return;
+      if (this.timerId !== null) {
+        this.clear(); // 清理现有定时器
       }
-      this.clear(); 
       this.task =task;
       this.timerId = window.setInterval(() => {
         if (this.task) {

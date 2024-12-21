@@ -41,7 +41,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme_user), db: AsyncSe
             raise HTTPException(status_code=404, detail="User not found")
 
         # 确保返回的 UserToken 包含所需字段
-        return UserToken(id=user.id, name=user.username, role=role)
+        return UserToken(id=user.id, user_name=user.username, role=role)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 

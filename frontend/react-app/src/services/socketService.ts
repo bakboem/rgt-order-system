@@ -11,8 +11,8 @@ class WebSocketService {
       return;
     }
 
-    this.createConnection(url); // 建立连接
-    this.startHeartbeat(url); // 启动心跳检测
+    this.createConnection(url); 
+    this.startHeartbeat(url);
   }
 
   private createConnection(url: string): void {
@@ -73,11 +73,11 @@ class WebSocketService {
       if (!isAlive) {
         console.warn("WebSocket connection lost, attempting to reconnect...");
         this.disconnect();
-        await this.reconnect(url); // 使用重连逻辑
+        await this.reconnect(url); 
       } else {
-        this.reconnectAttempts = 0; // 如果成功，重置重连次数
+        this.reconnectAttempts = 0; 
       }
-    }, 10000); // 每 10 秒检测一次
+    }, 10000); 
   }
   
 
@@ -96,10 +96,10 @@ class WebSocketService {
         this.lastResponse = false;
         this.sendMessage("ping");
         setTimeout(() => {
-          resolve(this.lastResponse); // 等待 pong 回复
+          resolve(this.lastResponse); 
         }, 1000);
       } else {
-        resolve(false); // 如果当前没有连接，返回 false
+        resolve(false); 
       }
     });
   }

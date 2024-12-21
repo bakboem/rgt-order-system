@@ -1,31 +1,50 @@
 import { WebSocketMessage } from "../models/models";
 
 const handleOrderUpdate = (data: any) => {
-    console.log(`Order Update!!!!:`, data);
+    console.log(`handleOrderUpdate Message:`, data);
 };
 
 const handleMenuAdd = (data: any) => {
-    console.log(`Menu Added:`, data);
+    console.log(`handleMenuAdd Message:`, data);
 };
 
 const handleWelcomeMessage = (data: any) => {
-    console.log(`Welcome Message: ${data.message}`);
+    console.log(`handleWelcomeMessage Message: ${data.message}`);
 };
 
 const handlePongMessage = (data: any) => {
-    console.log(`Pong received:`, data);
+    console.log(`handlePongMessage received:`, data);
 };
 
 const handleEchoMessage = (data: any) => {
-    console.log(`Echo received:`, data.received_data);
+    console.log(`handleEchoMessage received:`, data.received_data);
 };
-
+const handleOrderDelete = (data: any) => {
+    console.log(`handleOrderDelete received:`, data.received_data);
+};
+const handleOrderAdd = (data: any) => {
+    console.log(`handleOrderAdd received:`, data.received_data);
+};
+const handleMenuDelete = (data: any) => {
+    console.log(`handleMenuDelete received:`, data.received_data);
+};
+const handleMenuUpdate = (data: any) => {
+    console.log(`handleMenuUpdate received:`, data.received_data);
+};
 const messageHandlers: { [key: string]: (data: any) => void } = {
-    order_update: handleOrderUpdate,
+    
     menu_add: handleMenuAdd,
+    menu_update: handleMenuUpdate,
+    menu_delete: handleMenuDelete,
+
+    order_add: handleOrderAdd,
+    order_delete: handleOrderDelete,
+    order_update: handleOrderUpdate,
+
     welcome: handleWelcomeMessage,
     pong: handlePongMessage,
     echo: handleEchoMessage,
+
 };
 
 export const handleMessage = (rawData: string) => {
