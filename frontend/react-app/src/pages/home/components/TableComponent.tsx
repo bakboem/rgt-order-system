@@ -1,28 +1,22 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import {
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  Box,
-  TableBody,
-} from '@mui/material';
-import { OrderResponseModel } from '../../../models/responseModels';
-import { cell_bg } from '../../../style/colors';
-import { cellSxBolt, cellRowSx } from '../../../style/sx/containerSx';
-import TableRowComponent from './ComponentTableRow';
-import CustomText from '../../../commonView/customText';
+import { TableContainer,  Table, TableHead, TableRow, TableCell, Box, TableBody } from "@mui/material";
+import CustomText from "../../../commonView/customText";
+import { cell_bg } from "../../../style/colors";
+import { cellSxBolt, cellRowSx } from "../../../style/sx/containerSx";
+import TableRowComponent from "./ComponentTableRow";
+import { useRequestOrderList } from "../../../state/homePageState/hooks";
+import { useEffect } from "react";
 
-type TableComponentProps = {
-  data: OrderResponseModel[] | null;
-};
-const TableComponent: React.FC<TableComponentProps> = ({ data }) => {
-  return data == null ? (
+/* eslint-disable react-hooks/exhaustive-deps */
+
+const TableComponent: React.FC = () => {
+  const { orders } = useRequestOrderList();
+  useEffect(() => {
+  }, [orders]);
+
+  return orders == null ? (
     <CustomText>not data</CustomText>
   ) : (
-    <TableContainer component={Paper}>
+    <TableContainer >
       <Table sx={{ borderCollapse: 'collapse' }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: cell_bg }}>
@@ -38,7 +32,7 @@ const TableComponent: React.FC<TableComponentProps> = ({ data }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.map((item) => <TableRowComponent key={item.id} item={item} />)}
+          {orders?.map((item) => <TableRowComponent key={`${item.id}${item.state}`} item={item} />)}
         </TableBody>
       </Table>
     </TableContainer>

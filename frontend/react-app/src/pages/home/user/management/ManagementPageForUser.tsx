@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { userTokenName } from "../../../../config/statics";
@@ -18,12 +19,11 @@ const ManagementPageForUser: React.FC = () => {
   if (userToken && userToken ===activeToken && isTokenValid(userToken)) {
     requestMenu();
   }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (
     <Box sx={{...defaultContainerColumnSx,width:s_full,height:s_full}}>
-      <OrderRequestPage data={ menus}/>
+      <OrderRequestPage data={ menus}/>  
     </Box>
   );
 };

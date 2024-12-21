@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { homeTabBarState } from "../../../state/homePageState/atoms";
-import { as_center } from "../../../style/align";
+import { as_center, as_start } from "../../../style/align";
 import { s_full } from "../../../style/size";
 import { defaultContainerColumnSx } from "../../../style/sx/containerSx";
 import ManagementPageForUser from "./management/ManagementPageForUser";
@@ -19,7 +19,7 @@ const UserHomeContents: React.FC = () => {
         width: s_full,
         height: s_full,
         alignItems: as_center,
-        justifyContent: as_center,
+        justifyContent: as_start,
       }}
     >
       {tabIndex === 0 ? <ManagementPageForUser /> : <DashboardPageForUser />}

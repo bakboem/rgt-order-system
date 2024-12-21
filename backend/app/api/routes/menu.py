@@ -1,6 +1,6 @@
 from operator import and_
 from fastapi import APIRouter, Depends, HTTPException,Body
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import async_session
 from app.models.models import Instock, Menu,Order,SaleTracking
@@ -24,7 +24,7 @@ async def get_db():
 @router.get("/all/for/biz", response_model=list[MenuWithStock])
 async def get_all_menus(db: AsyncSession = Depends(get_db),current_user: BizToken = Depends(get_current_biz_user)):
     result =await  db.execute(
-        select(Menu).filter(Menu.status == "available",current_user.id == Menu.biz_id)
+        select(Menu).filter(Menu.status == "available",current_user.id == Menu.biz_id).order_by(desc(Menu.created_at))
     )
     menus = result.scalars().all()
     # Get stock for each menu from the Instock table
@@ -44,7 +44,7 @@ async def get_all_menus(db: AsyncSession = Depends(get_db),current_user: BizToke
 
 @router.get("/all/for/user", response_model=list[MenuWithStock])
 async def get_all_menus(db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_user)):
-    result = await db.execute( select(Menu).filter(Menu.status == "available"))
+    result = await db.execute( select(Menu).filter(Menu.status == "available").order_by(desc(Menu.created_at)))
     menus = result.scalars().all()
 
     response = []
@@ -61,7 +61,7 @@ async def get_all_menus(db: AsyncSession = Depends(get_db), current_user: BizTok
         ))
     return response
 
-@router.post("/add", response_model=MenuResponse)
+@router.post("/addMenu", response_model=MenuResponse)
 async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
     result = await db.execute(select(Menu).filter(Menu.name == menu.name, Menu.biz_id == current_user.id))
     existing_menu = result.scalar_one_or_none()

@@ -73,10 +73,64 @@ export function useCreateOrder() {
 
 
 
-export function useUpdateUserOrderState(updateOrder: OrderResponseModel) {
+export function useAddUserOrderState() {
+  const addOrderState = (updateOrder: OrderResponseModel) => {
+  };
+  return addOrderState;
+}
+
+export function useDeleteOrderState() {
+  const deleteOrderState = (updateOrder: OrderResponseModel) => {
+  };
+  return deleteOrderState;
+}
+
+export function useAddMenuState() {
+  const addMenuState = (updateOrder: OrderResponseModel) => {
+  };
+  return addMenuState;
+}
+
+export function useUpdateMenuState() {
+  const updateMenuState = (updateOrder: OrderResponseModel) => {
+  };
+  return updateMenuState;
+}
+
+export function useADeleteMenuState() {
+  const deleteMenuState = (updateOrder: OrderResponseModel) => {
+  };
+  return deleteMenuState;
+}
+
+
+
+export function useUpdateUserOrderState() {
   const [orders, setOrderList] = useRecoilState(userOrderListState);
 
-  const updateOrderState = () => {
+  const updateOrderState = (updateOrder: OrderResponseModel) => {
+    if (updateOrder.id && updateOrder.state) {
+      setOrderList((prevOrders) => {
+        const orderIndex = prevOrders.findIndex((order) =>  order.id === updateOrder.id);
+        if (orderIndex !== -1) {
+          const updatedOrders = [...prevOrders];
+          updatedOrders[orderIndex] = { ...prevOrders[orderIndex], state: updateOrder.state };
+          return updatedOrders;
+        } else {
+          console.log("update order successful");
+          return [...prevOrders, updateOrder];
+        }
+      });
+    }
+  };
+  return updateOrderState;
+}
+
+
+export function useUpdateBizOrderState() {
+  const [orders, setOrderList] = useRecoilState(userOrderListState);
+
+  const updateOrderState = (updateOrder: OrderResponseModel) => {
     setOrderList((prevOrders) => {
       const orderIndex = prevOrders.findIndex((order) => order.id === updateOrder.id);
       if (orderIndex !== -1) {
@@ -90,6 +144,7 @@ export function useUpdateUserOrderState(updateOrder: OrderResponseModel) {
   };
   return updateOrderState;
 }
+
 
 
 export function useRequestOrderList() {

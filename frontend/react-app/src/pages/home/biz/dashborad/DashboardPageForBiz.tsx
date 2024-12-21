@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
 import React, { useEffect } from 'react';
 import CustomText from '../../../../commonView/customText';
-import socketService from '../../../../services/socketService';
 import timerService from '../../../../services/timerService';
 import SocketUtils from '../../../../utils/socketUtil';
+import webSocketService from '../../../../services/webSocketService';
 
 
 const DashboardPageForBiz: React.FC = () => {
@@ -15,16 +15,16 @@ const DashboardPageForBiz: React.FC = () => {
     const initializeSocket = async () => {
       try {
         const socketUrl = await SocketUtils.getSocketUrl();
-        socketService.connect(socketUrl);
+        webSocketService.connect(socketUrl);
   
         // 启动心跳检测
         timerService.start(async () => {
           if (!isUnmounted) {
-            const isAlive = await socketService.checkAlive();
+            const isAlive = await webSocketService.checkAlive();
             if (!isAlive) {
               console.warn("WebSocket connection lost, attempting to reconnect...");
-              socketService.disconnect();
-              socketService.connect(socketUrl); // 自动重连
+              webSocketService.disconnect();
+              webSocketService.connect(socketUrl); // 自动重连
             }
           }
         }, 10000); // 每 10 秒检测一次
@@ -39,7 +39,7 @@ const DashboardPageForBiz: React.FC = () => {
     return () => {
       isUnmounted = true;
       timerService.clear();
-      socketService.disconnect();
+      webSocketService.disconnect();
     };
   }, []);
   

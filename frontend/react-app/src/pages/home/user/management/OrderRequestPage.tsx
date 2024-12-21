@@ -1,4 +1,4 @@
-import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
+import { Box, TableContainer,  Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import CustomButton from "../../../../commonView/customButton";
@@ -8,14 +8,17 @@ import { CreateOrderModel } from "../../../../models/requestModels";
 import { MenuResponseModel } from "../../../../models/responseModels";
 import { useCreateOrder } from "../../../../state/homePageState/hooks";
 import { as_center } from "../../../../style/align";
-import { s_full } from "../../../../style/size";
-import { defaultContainerColumnSx, cellRowSx, defaultContainerRowSx, buttonSx, cellSxBolt, cellSx } from "../../../../style/sx/containerSx";
 import { cell_bg } from "../../../../style/colors";
+import { s_full } from "../../../../style/size";
+import { defaultContainerColumnSx, cellSxBolt, cellRowSx, cellSx, defaultContainerRowSx, buttonSx } from "../../../../style/sx/containerSx";
+
 
 interface MenuTableListViewProps {
   data: MenuResponseModel[];
 }
 const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
+
+  const messageShow = "주문이 접수 되었습니다.대시보드에서 확인 해주세요!";
   const { requestCreateOrder } = useCreateOrder();
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
     data.reduce((acc, item) => ({ ...acc, [item.id]: 0 }), {}),
@@ -23,28 +26,28 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
 
   const handleIncrease = (id: string) => {
     setQuantities((prev) => {
-      const currentQuantity = prev[id] || 0; 
+      const currentQuantity = prev[id] || 0;
       return { ...prev, [id]: currentQuantity + 1 };
     });
   };
 
   const handleDecrease = (id: string) => {
     setQuantities((prev) => {
-      const currentQuantity = prev[id] || 0; 
+      const currentQuantity = prev[id] || 0;
       return { ...prev, [id]: Math.max(currentQuantity - 1, 0) };
     });
   };
 
   const submmitButtonText = '주문';
 
-  return (
+  return data.length === 0 ? (
+    <CustomText>not data</CustomText>
+  ) : (
     <Box sx={{ ...defaultContainerColumnSx }}>
-      <TableContainer
-        component={Paper}
-      >
+      <TableContainer >
         <Table sx={{ borderCollapse: 'collapse' }}>
           <TableHead>
-            <TableRow sx={{ backgroundColor: cell_bg}}>
+            <TableRow sx={{ backgroundColor: cell_bg }}>
               <TableCell sx={cellSxBolt}>
                 <Box sx={cellRowSx}>Name</Box>
               </TableCell>
@@ -60,10 +63,10 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
             {data.map((item) => (
               <TableRow key={item.id}>
                 <TableCell sx={cellSx}>
-                  <Box sx={defaultContainerRowSx}>  {item.name}</Box>
+                  <Box sx={defaultContainerRowSx}> {item.name}</Box>
                 </TableCell>
                 <TableCell sx={cellSx}>
-                <Box sx={defaultContainerRowSx}>  {item.price}</Box>
+                  <Box sx={defaultContainerRowSx}> {item.price}</Box>
                 </TableCell>
                 <TableCell sx={cellSx}>
                   <Box
@@ -79,7 +82,7 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
                     >
                       -
                     </Button>
-                    <CustomText>{quantities[item.id]}</CustomText>
+                    <CustomText>{quantities[item.id] || 0}</CustomText>
                     <Button
                       onClick={() => handleIncrease(item.id)}
                       sx={buttonSx}
@@ -95,7 +98,12 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
       </TableContainer>
       <CustomColumnHolder multiplier={8} />
       <Box
-        sx={{ ...defaultContainerRowSx,width : s_full, alignItems: as_center ,justifyItems: as_center }}
+        sx={{
+          ...defaultContainerRowSx,
+          width: s_full,
+          alignItems: as_center,
+          justifyItems: as_center,
+        }}
       >
         <CustomButton
           textKey={submmitButtonText}
@@ -112,11 +120,10 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
             if (ordersRequest.length < 1) return;
             await requestCreateOrder(ordersRequest, () => {
               console.log('Quantities reset to:', {});
-              toast.success(
-                '주문이 접수 되었습니다.데시보드에서 확인 해주세요!',
+              toast.success(messageShow,
                 {
                   position: 'top-right',
-                  autoClose: 3000,
+                  autoClose: 3000
                 },
               );
               setQuantities({});

@@ -9,6 +9,7 @@ type TableRowProps = {
 };
 
 const TableRowComponent: React.FC<TableRowProps> = React.memo(({ item }) => {
+  console.log("Rendering ID ", item?.id);
   return item == null ? (
     <CustomText>not data</CustomText>
   ) : (
@@ -20,7 +21,7 @@ const TableRowComponent: React.FC<TableRowProps> = React.memo(({ item }) => {
         <Box sx={defaultContainerRowSx}> {item.quantity}</Box>
       </TableCell>
       <TableCell sx={cellSx}>
-        <Box sx={defaultContainerRowSx}> </Box>
+        <Box sx={defaultContainerRowSx}>{item.state === 'waiting'?'접수대기':item.state === 'pending'?'처리중':'처리완료'} </Box>
       </TableCell>
     </TableRow>
   );

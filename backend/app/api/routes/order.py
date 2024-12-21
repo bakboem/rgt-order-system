@@ -1,6 +1,6 @@
 import json
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from app.db.session import async_session
 from app.models.models import Menu, Order,Instock ,User
 from app.schemas.schemas import  OrderCreate,OrderResponse,OrderUpdate,MenuResponse, BizToken,UserToken, WebSocketMessage
@@ -28,7 +28,7 @@ async def get_all_orders_for_user(db: AsyncSession = Depends(get_db), current_us
             joinedload(Order.menu).joinedload(Menu.instock),  # 预加载菜单和库存
             joinedload(Order.biz),                           # 预加载商家信息
             joinedload(Order.user)                           # 预加载用户信息
-        )
+        ).order_by(desc(Order.created_at))
     )
     orders = result.scalars().all()
 
@@ -67,7 +67,7 @@ async def get_all_orders_for_biz(db: AsyncSession = Depends(get_db), current_use
             joinedload(Order.menu).joinedload(Menu.instock),  # 预加载菜单和库存
             joinedload(Order.biz),                           # 预加载商家信息
             joinedload(Order.user)                           # 预加载用户信息
-        )
+        ).order_by(desc(Order.created_at))
     )
     orders = result.scalars().all()
     
@@ -97,7 +97,7 @@ async def get_all_orders_for_biz(db: AsyncSession = Depends(get_db), current_use
     return orders_with_details
 
 
-@router.post("/add", response_model=dict)
+@router.post("/addOrder", response_model=dict)
 async def add_orders(
     orders: list[OrderCreate],
     db: AsyncSession = Depends(get_db),

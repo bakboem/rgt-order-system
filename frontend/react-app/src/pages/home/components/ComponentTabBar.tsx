@@ -11,10 +11,11 @@ import { defaultContainerRowSx } from "../../../style/sx/containerSx";
 
 
 const ComponentTabBar: React.FC = () => {
+  const mainText ="메인";
+  const dashboardText = "대시보드";
   const [tabIndex, setTabIndex] = useRecoilState(homeTabBarState);
   const changedIndexOneColor = tabIndex === 1 ? c_white : c_primary;
   const changedIndexTwoColor = tabIndex === 1 ? c_primary : c_white;
-
   const changedBg = tabIndex === 1 ? { backgroundColor: c_primary } : {};
   const changedBg2 = tabIndex === 1 ? {} : { backgroundColor: c_primary };
 
@@ -32,7 +33,7 @@ const ComponentTabBar: React.FC = () => {
           <Box sx={{ ...rowStart_columnCenter }}>
           
             <CustomText
-              textKey={"메인"}
+              textKey={mainText}
               variant={f_body}
               color={changedIndexTwoColor}
             ></CustomText>
@@ -45,7 +46,7 @@ const ComponentTabBar: React.FC = () => {
         children={
           <Box sx={{ ...rowStart_columnCenter }}>
             <CustomText
-              textKey={"데시보드"}
+              textKey={dashboardText}
               variant={f_body}
               color={changedIndexOneColor}
             ></CustomText>
