@@ -13,6 +13,8 @@ export const c_primaryTransparent2 = 'rgba(97, 64, 230, 0.2)';
 export const c_second = '#00BFA6';
 export const c_gray = '#F5F5F5';
 export const c_bg = '#E0E0E0';
+export const cell_bg =  '#f5f5f5';
+
 export const c_white = '#FFFFFF';
 export const c_text = '#333333';
 export const c_sub_text = '#666666';

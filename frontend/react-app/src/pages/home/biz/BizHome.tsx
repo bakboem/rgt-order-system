@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isActiveBiz } from '../../utils/tokenUtils';
-import { login_route_name_for_biz } from '../../config/statics';
-import ChangePageContents from '../login/ChangePageContents';
-import HomeTabBarView from './HomeTabBarView';
+import { isActiveBiz } from '../../../utils/tokenUtils';
+import { login_route_name_for_biz } from '../../../config/statics';
+import ChangePageContents from '../../login/ChangePageContents';
 import BizHomeContents from './BizHomeContents';
-import { s_full } from '../../style/size';
-import { generateGridLayout } from '../../layout/gridLayout';
+import { s_full } from '../../../style/size';
+import { generateGridLayout } from '../../../layout/gridLayout';
 import Box from '@mui/material/Box/Box';
+import ComponentTabBar from '../components/ComponentTabBar';
 
 const BizHome: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const BizHome: React.FC = () => {
         height: "50px",
       },
       {
-        content: <HomeTabBarView />,
+        content: <ComponentTabBar />,
         size: 12,
         height: '150px',
       },

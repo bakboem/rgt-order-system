@@ -1,16 +1,16 @@
-
 import { Box } from "@mui/material";
 import { useRecoilState } from "recoil";
-import CustomBorderButton from "../../commonView/customBorderButton";
-import { rowStart_columnCenter } from "../../style/sx/alignSx";
-import { defaultContainerRowSx } from "../../style/sx/containerSx";
-import CustomRowHolder from "../../commonView/customRowHolder";
-import CustomText from "../../commonView/customText";
-import { f_body } from "../../style/font";
-import { c_primary, c_white } from "../../style/colors";
-import { homeTabBarState } from "../../state/homePageState/atoms";
+import CustomBorderButton from "../../../commonView/customBorderButton";
+import CustomRowHolder from "../../../commonView/customRowHolder";
+import CustomText from "../../../commonView/customText";
+import { homeTabBarState } from "../../../state/homePageState/atoms";
+import { c_white, c_primary } from "../../../style/colors";
+import { f_body } from "../../../style/font";
+import { rowStart_columnCenter } from "../../../style/sx/alignSx";
+import { defaultContainerRowSx } from "../../../style/sx/containerSx";
 
-const HomeTabBarView: React.FC = () => {
+
+const ComponentTabBar: React.FC = () => {
   const [tabIndex, setTabIndex] = useRecoilState(homeTabBarState);
   const changedIndexOneColor = tabIndex === 1 ? c_white : c_primary;
   const changedIndexTwoColor = tabIndex === 1 ? c_primary : c_white;
@@ -58,4 +58,4 @@ const HomeTabBarView: React.FC = () => {
   );
 };
 
-export default HomeTabBarView;
+export default ComponentTabBar;

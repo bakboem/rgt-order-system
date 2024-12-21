@@ -4,7 +4,6 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import EntryPage from './pages/entry/EntryPage';
 import SplashPage from './pages/splash/SplashPage';
 import {
   entryPage,
@@ -14,8 +13,7 @@ import {
   login_route_name_for_user,
   splashPage,
 } from './config/statics';
-import BizHome from './pages/home/BizHome';
-import UserHome from './pages/home/UserHome';
+import BizHome from './pages/home/biz/BizHome';
 import BizLogin from './pages/login/BizLogin';
 import UserLogin from './pages/login/UserLogin';
 import { ThemeProvider } from '@mui/material/styles';
@@ -23,6 +21,8 @@ import { appTheme } from './style/theme';
 import UnauthorizedHandler from './services/unauthorizedHandle';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserHome from './pages/home/user/UserHome';
+import EntryPage from './pages/EntryPage';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );

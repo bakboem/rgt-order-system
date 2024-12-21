@@ -1,31 +1,21 @@
-import React, { useState } from 'react';
-import { MenuResponseModel } from '../../models/responseModels';
-import {
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
-import { s_full, s_menu_icon_height } from '../../style/size';
-import Box from '@mui/material/Box/Box';
-import {
-  defaultContainerColumnSx,
-  defaultContainerRowSx,
-} from '../../style/sx/containerSx';
-import CustomButton from '../../commonView/customButton';
-import { as_center } from '../../style/align';
-import CustomColumnHolder from '../../commonView/customColumnHolder';
-import { useCreateOrder } from '../../state/homePageState/hooks';
-import { CreateOrderModel } from '../../models/requestModels';
-import { toast } from 'react-toastify';
+import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import CustomButton from "../../../../commonView/customButton";
+import CustomColumnHolder from "../../../../commonView/customColumnHolder";
+import CustomText from "../../../../commonView/customText";
+import { CreateOrderModel } from "../../../../models/requestModels";
+import { MenuResponseModel } from "../../../../models/responseModels";
+import { useCreateOrder } from "../../../../state/homePageState/hooks";
+import { as_center } from "../../../../style/align";
+import { s_full } from "../../../../style/size";
+import { defaultContainerColumnSx, cellRowSx, defaultContainerRowSx, buttonSx, cellSxBolt, cellSx } from "../../../../style/sx/containerSx";
+import { cell_bg } from "../../../../style/colors";
+
 interface MenuTableListViewProps {
   data: MenuResponseModel[];
 }
-const UserHomeMenuTableView: React.FC<MenuTableListViewProps> = ({ data }) => {
+const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
   const { requestCreateOrder } = useCreateOrder();
   const [quantities, setQuantities] = useState<{ [key: string]: number }>(
     data.reduce((acc, item) => ({ ...acc, [item.id]: 0 }), {}),
@@ -33,72 +23,70 @@ const UserHomeMenuTableView: React.FC<MenuTableListViewProps> = ({ data }) => {
 
   const handleIncrease = (id: string) => {
     setQuantities((prev) => {
-      const currentQuantity = prev[id] || 0; // 如果值不存在，默认为 0
+      const currentQuantity = prev[id] || 0; 
       return { ...prev, [id]: currentQuantity + 1 };
     });
   };
 
   const handleDecrease = (id: string) => {
     setQuantities((prev) => {
-      const currentQuantity = prev[id] || 0; // 如果值不存在，默认为 0
-      return { ...prev, [id]: Math.max(currentQuantity - 1, 0) }; // 确保不低于 0
+      const currentQuantity = prev[id] || 0; 
+      return { ...prev, [id]: Math.max(currentQuantity - 1, 0) };
     });
   };
 
   const submmitButtonText = '주문';
+
   return (
-    <Box sx={{ ...defaultContainerColumnSx, width: s_full ,height :"300px" }}>
+    <Box sx={{ ...defaultContainerColumnSx }}>
       <TableContainer
         component={Paper}
-        sx={{ border: '1px solid #ccc', borderRadius: '8px' }}
       >
         <Table sx={{ borderCollapse: 'collapse' }}>
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableCell sx={{ border: '1px solid #ddd', fontWeight: 'bold' }}>
-                Name
+            <TableRow sx={{ backgroundColor: cell_bg}}>
+              <TableCell sx={cellSxBolt}>
+                <Box sx={cellRowSx}>Name</Box>
               </TableCell>
-              <TableCell sx={{ border: '1px solid #ddd', fontWeight: 'bold' }}>
-                Price
+              <TableCell sx={cellSxBolt}>
+                <Box sx={cellRowSx}>Price</Box>
               </TableCell>
-              <TableCell sx={{ border: '1px solid #ddd', fontWeight: 'bold' }}>
-                Quantity
+              <TableCell sx={cellSxBolt}>
+                <Box sx={cellRowSx}>Quantity</Box>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((item) => (
               <TableRow key={item.id}>
-                <TableCell sx={{ border: '1px solid #ddd' }}>
-                  {item.name}
+                <TableCell sx={cellSx}>
+                  <Box sx={defaultContainerRowSx}>  {item.name}</Box>
                 </TableCell>
-                <TableCell sx={{ border: '1px solid #ddd' }}>
-                  {item.price}
+                <TableCell sx={cellSx}>
+                <Box sx={defaultContainerRowSx}>  {item.price}</Box>
                 </TableCell>
-                <TableCell sx={{ border: '1px solid #ddd' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-around',
+                <TableCell sx={cellSx}>
+                  <Box
+                    sx={{
+                      ...defaultContainerRowSx,
+                      alignItems: as_center,
+                      height: '15px',
                     }}
                   >
                     <Button
                       onClick={() => handleDecrease(item.id)}
-                      sx={{ fontSize: s_menu_icon_height }}
+                      sx={buttonSx}
                     >
                       -
                     </Button>
-                    <span style={{ margin: '0 10px', fontSize: '18px' }}>
-                      {quantities[item.id]}
-                    </span>
+                    <CustomText>{quantities[item.id]}</CustomText>
                     <Button
                       onClick={() => handleIncrease(item.id)}
-                      sx={{ fontSize: s_menu_icon_height }}
+                      sx={buttonSx}
                     >
                       +
                     </Button>
-                  </div>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
@@ -107,9 +95,8 @@ const UserHomeMenuTableView: React.FC<MenuTableListViewProps> = ({ data }) => {
       </TableContainer>
       <CustomColumnHolder multiplier={8} />
       <Box
-        sx={{ ...defaultContainerRowSx, width: s_full, alignItems: as_center }}
+        sx={{ ...defaultContainerRowSx,width : s_full, alignItems: as_center ,justifyItems: as_center }}
       >
-        {' '}
         <CustomButton
           textKey={submmitButtonText}
           onClick={async () => {
@@ -141,4 +128,4 @@ const UserHomeMenuTableView: React.FC<MenuTableListViewProps> = ({ data }) => {
   );
 };
 
-export default UserHomeMenuTableView;
+export default OrderRequestPage;

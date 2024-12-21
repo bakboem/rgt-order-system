@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CommonResponseModel, MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
 import { apiRequest } from "../../services/apiService";
 import { ApiRequestType } from "../../enums/apiRequestType";
 import { useRecoilState } from "recoil";
-import { homeMenuListState, homeOrderListState } from "./atoms";
+import { homeMenuListState, userOrderListState } from "./atoms";
 import { plainToInstance } from "class-transformer";
 import { useRef } from "react";
 import { ApiRequestTypeBodyModel } from "../../models/apiRequestBodyModels";
@@ -72,9 +73,27 @@ export function useCreateOrder() {
 
 
 
+export function useUpdateUserOrderState(updateOrder: OrderResponseModel) {
+  const [orders, setOrderList] = useRecoilState(userOrderListState);
+
+  const updateOrderState = () => {
+    setOrderList((prevOrders) => {
+      const orderIndex = prevOrders.findIndex((order) => order.id === updateOrder.id);
+      if (orderIndex !== -1) {
+        const updatedOrders = [...prevOrders];
+        updatedOrders[orderIndex] = { ...prevOrders[orderIndex], state: updateOrder.state };
+        return updatedOrders;
+      } else {
+        return [...prevOrders, updateOrder];
+      }
+    });
+  };
+  return updateOrderState;
+}
+
 
 export function useRequestOrderList() {
-  const [orders, setOrderList] = useRecoilState(homeOrderListState);
+  const [orders, setOrderList] = useRecoilState(userOrderListState);
   const isFetching = useRef(false);
   const requestOrder= async () => {
       if (isFetching.current) return; // 防止重复请求

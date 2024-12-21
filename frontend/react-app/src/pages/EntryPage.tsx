@@ -1,14 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  home_route_name_for_user,
-  home_route_name_for_biz,
-  login_route_name_for_user,
-  login_route_name_for_biz,
-  splashPage,
-  entryPage,
-} from '../../config/statics';
-import { isActiveBiz, isActiveUser } from '../../utils/tokenUtils';
+import { splashPage, entryPage, home_route_name_for_user, login_route_name_for_user, home_route_name_for_biz, login_route_name_for_biz } from '../config/statics';
+import { isActiveUser, isActiveBiz } from '../utils/tokenUtils';
+
 
 const EntryPage: React.FC = () => {
   const location = useLocation();

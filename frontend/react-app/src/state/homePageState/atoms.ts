@@ -1,6 +1,7 @@
 
 
 import { atom } from "recoil";
+import { atomFamily } from "recoil";
 import { MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
 
 
@@ -14,7 +15,27 @@ export const homeMenuListState = atom<MenuResponseModel[]>({
   default: [],
 });
 
-export const homeOrderListState = atom<OrderResponseModel[]>({
-  key: "homeOrderListState", // unique ID
+export const userOrderListState = atom<OrderResponseModel[]>({
+  key: "userOrderListState", // unique ID
   default: [],
+});
+
+
+export const tableRowAtomFamily = atomFamily<OrderResponseModel, string>({
+  key: "tableRowAtomFamily",
+  default: (id: string) =>
+    new OrderResponseModel(
+      id,
+      "waiting",
+      0, 
+      "",
+      "", 
+      new MenuResponseModel(
+        "", 
+        "", 
+        "", 
+        0, 
+        0 
+      )
+    ),
 });

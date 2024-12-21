@@ -1,9 +1,9 @@
 import React from 'react';
-import CustomText from '../../commonView/customText';
 import Box from '@mui/material/Box/Box';
+import CustomText from '../../../../commonView/customText';
 
 
-const BizHomeContentsMain: React.FC = () => {
+const ManagementPageForBiz: React.FC = () => {
   return (
     <Box >
       <CustomText>this is biz main</CustomText>
@@ -11,4 +11,4 @@ const BizHomeContentsMain: React.FC = () => {
   );
 };
 
-export default BizHomeContentsMain;
+export default ManagementPageForBiz;

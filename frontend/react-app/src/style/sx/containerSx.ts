@@ -1,5 +1,5 @@
 import { as_center, as_start } from '../align';
-import { c_success, c_dis_text, c_primary, c_white } from '../colors';
+import { c_success, c_dis_text, c_primary, c_white, cell_bg } from '../colors';
 import { s_full } from '../size';
 /*
  * Filename: /Users/bakbeom/work/sm/surginus-htms/src/style/sx/containerSx.ts
@@ -109,3 +109,9 @@ export const unBindingSx = {
   borderRadius: '50%',
   backgroundColor: c_dis_text, // 使用当前文本颜色，可以根据需要更改
 };
+
+
+ export const cellRowSx = { ...defaultContainerRowSx, backgroundColor: cell_bg };
+ export const cellSxBolt ={ border: '1px solid #ddd', fontWeight: 'bold' };
+ export const cellSx ={ border: '1px solid #ddd', fontWeight: 'bold' };
+ export const buttonSx =  { width: '20px', height: '50px', fontSize: 15 }

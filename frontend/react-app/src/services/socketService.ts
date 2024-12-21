@@ -20,7 +20,7 @@ class WebSocketService {
 
     newSocket.onopen = () => {
       console.log("WebSocket connected");
-      this.socket = newSocket; // 替换旧连接
+      this.socket = newSocket; 
     };
 
     newSocket.onclose = () => {
@@ -109,7 +109,6 @@ class WebSocketService {
       clearInterval(this.heartbeatInterval);
       this.heartbeatInterval = null;
     }
-
     if (this.socket) {
       this.socket.close();
       this.socket = null;

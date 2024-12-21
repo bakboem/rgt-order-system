@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
-import { isActiveUser } from '../../utils/tokenUtils';
-import { login_route_name_for_user } from '../../config/statics';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box/Box';
-import { generateGridLayout } from '../../layout/gridLayout';
-import { s_full } from '../../style/size';
 import UserHomeContents from './UserHomeContents';
-import HomeTabBarView from './HomeTabBarView';
-import ChangePageContents from '../login/ChangePageContents';
+import { isActiveUser } from '../../../utils/tokenUtils';
+import { login_route_name_for_user } from '../../../config/statics';
+import ChangePageContents from '../../login/ChangePageContents';
+import { s_full } from '../../../style/size';
+import { generateGridLayout } from '../../../layout/gridLayout';
+import ComponentTabBar from '../components/ComponentTabBar';
 
 const UserHome: React.FC = () => {
   const navigate = useNavigate();
@@ -27,14 +27,14 @@ const UserHome: React.FC = () => {
         height: "50px",
       },
       {
-        content: <HomeTabBarView />,
+        content: <ComponentTabBar />,
         size: 12,
-        height: '150px',
+        height: "100px",
       },
       {
         content: <UserHomeContents />,
         size: 12,
-        height: s_full,
+        height: "500px",
       },
     ],
     rowSpacing: 1,
@@ -42,7 +42,7 @@ const UserHome: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: "70%", display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{   height: s_full, display: 'flex', flexDirection: 'column' }}>
       <>{generateGridLayout(layoutConfigs)}</>
     </Box>
   );

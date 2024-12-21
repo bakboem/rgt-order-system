@@ -1,40 +1,35 @@
-import { Box } from '@mui/material';
-import React, { useEffect } from 'react';
-import CustomText from '../../commonView/customText';
-import socketService from '../../services/socketService';
-import SocketUtils from '../../utils/socketUtil';
-import timerService from '../../services/timerService';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+import socketService from "../../../../services/socketService";
+import timerService from "../../../../services/timerService";
+import { useRequestOrderList } from "../../../../state/homePageState/hooks";
+import SocketUtils from '../../../../utils/socketUtil';
+import TableComponent from "../../components/TableComponent";
 
-const BizHomeContentsDashboard: React.FC = () => {
- 
-  useEffect(() => {
+const DashboardPageForUser: React.FC = () => {
+  const { orders, requestOrder } = useRequestOrderList();
+   useEffect(() => {
     let isUnmounted = false;
-  
-    // 初始化
     const initializeSocket = async () => {
       try {
         const socketUrl = await SocketUtils.getSocketUrl();
         socketService.connect(socketUrl);
-  
-        // 启动心跳检测
         timerService.start(async () => {
           if (!isUnmounted) {
             const isAlive = await socketService.checkAlive();
             if (!isAlive) {
               console.warn("WebSocket connection lost, attempting to reconnect...");
               socketService.disconnect();
-              socketService.connect(socketUrl); // 自动重连
+              socketService.connect(socketUrl); 
             }
           }
-        }, 10000); // 每 10 秒检测一次
+        }, 20000); 
       } catch (error) {
         console.error("Failed to initialize WebSocket:", error);
       }
     };
-  
     initializeSocket();
-  
-    // 清理资源
+    requestOrder()
     return () => {
       isUnmounted = true;
       timerService.clear();
@@ -42,12 +37,11 @@ const BizHomeContentsDashboard: React.FC = () => {
     };
   }, []);
   
-  
+ 
   return (
-    <Box>
-      <CustomText>this is biz dashboard</CustomText>
-    </Box>
+      <TableComponent data ={orders}></TableComponent>
   );
 };
 
-export default BizHomeContentsDashboard;
+
+export default DashboardPageForUser

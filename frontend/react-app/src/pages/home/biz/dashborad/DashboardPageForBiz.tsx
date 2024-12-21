@@ -1,17 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+import { Box } from '@mui/material';
 import React, { useEffect } from 'react';
-import SocketUtils from '../../utils/socketUtil';
-import socketService from '../../services/socketService';
-import timerService from '../../services/timerService';
-import { useRequestOrderList } from '../../state/homePageState/hooks';
-import UserHomeDashboardListView from './UserHomeDashboardListView';
+import CustomText from '../../../../commonView/customText';
+import socketService from '../../../../services/socketService';
+import timerService from '../../../../services/timerService';
+import SocketUtils from '../../../../utils/socketUtil';
 
-const UserHomeContentsDashboard: React.FC = () => {
-  //  const isFetching = useRef(false);
-   const { orders, requestOrder } = useRequestOrderList();
 
-   useEffect(() => {
+const DashboardPageForBiz: React.FC = () => {
+ 
+  useEffect(() => {
     let isUnmounted = false;
+  
     // 初始化
     const initializeSocket = async () => {
       try {
@@ -35,7 +34,6 @@ const UserHomeContentsDashboard: React.FC = () => {
     };
   
     initializeSocket();
-    requestOrder()
   
     // 清理资源
     return () => {
@@ -45,10 +43,12 @@ const UserHomeContentsDashboard: React.FC = () => {
     };
   }, []);
   
- 
+  
   return (
-    <UserHomeDashboardListView data={orders}/>
+    <Box>
+      <CustomText>this is biz dashboard</CustomText>
+    </Box>
   );
 };
 
-export default UserHomeContentsDashboard;
+export default DashboardPageForBiz;

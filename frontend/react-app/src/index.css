@@ -26,7 +26,10 @@ html, body {
   overflow-x: hidden; /* 防止出现水平滚动 */
 }
 
-
+.table-row {
+  line-height: 1.5; /* 设置行高 */
+  height: 50px;     /* 设置行高为固定值 */
+}
 *,
 *::before,
 *::after {
