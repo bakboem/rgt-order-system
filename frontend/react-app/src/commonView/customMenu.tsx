@@ -4,17 +4,17 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
 interface CustomMenuProps {
-  items: string[]; // 菜单项文本列表
-  callbacks: Array<() => void>; // 每个菜单项的回调函数列表
-  icon: React.ReactNode; // 显示菜单的触发图标
+  items: string[]; 
+  callbacks: Array<() => void>; 
+  icon: React.ReactNode; 
 }
 
 const CustomMenu: React.FC<CustomMenuProps> = ({ items, callbacks, icon }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault(); // 阻止默认右键菜单（可选）
-    setAnchorEl(event.currentTarget); // 设置菜单位置
+    event.preventDefault(); 
+    setAnchorEl(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
@@ -23,11 +23,9 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ items, callbacks, icon }) => {
 
   return (
     <Box>
-      {/* 触发菜单的图标 */}
       <Box onClick={handleOpenMenu} onContextMenu={handleOpenMenu}>
         {icon}
       </Box>
-      {/* 菜单组件 */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

@@ -46,7 +46,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\":\"biz2\",\n    \"password\":\"biz2\"\n}",
+					"raw": "{\n    \"username\":\"biz1\",\n    \"password\":\"biz1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -105,39 +105,13 @@
 			"response": []
 		},
 		{
-			"name": "menu/add",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\":\"맛생선\",\n    \"image_url\":\"\",\n    \"price\":14400.0,\n    \"stock\":10\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseURL}}menu/add",
-					"host": [
-						"{{baseURL}}menu"
-					],
-					"path": [
-						"add"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "menu/update/{id}",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\":\"영양갱4\",\n    \"image_url\":\"\",\n    \"price\":1000.0\n\n}",
+					"raw": "{\n    \"name\":\"마라탕25\",\n    \"image_url\":\"sb\",\n    \"price\":1000.0\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -145,13 +119,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}menu/update/b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+					"raw": "{{baseURL}}menu/update/8f3a2084-7fc0-4f41-b6a3-a17e8ff69e28",
 					"host": [
 						"{{baseURL}}menu"
 					],
 					"path": [
 						"update",
-						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384"
+						"8f3a2084-7fc0-4f41-b6a3-a17e8ff69e28"
 					]
 				}
 			},
@@ -172,14 +146,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}menu/update/stock/b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+					"raw": "{{baseURL}}menu/update/stock/38fb14c0-5b42-4a3c-a328-96d111a4aa9e",
 					"host": [
 						"{{baseURL}}menu"
 					],
 					"path": [
 						"update",
 						"stock",
-						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384"
+						"38fb14c0-5b42-4a3c-a328-96d111a4aa9e"
 					]
 				}
 			},
@@ -191,12 +165,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}menu/b37b2fb7-dde3-4ec3-91f3-fa2f69329384/stock",
+					"raw": "{{baseURL}}menu/38fb14c0-5b42-4a3c-a328-96d111a4aa9e/stock",
 					"host": [
 						"{{baseURL}}menu"
 					],
 					"path": [
-						"b37b2fb7-dde3-4ec3-91f3-fa2f69329384",
+						"38fb14c0-5b42-4a3c-a328-96d111a4aa9e",
 						"stock"
 					]
 				}
@@ -213,7 +187,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\":\"영양갱\",\n    \"image_url\":\"\",\n    \"price\":2500.0,\n    \"stock\":10\n\n}",
+					"raw": "{\n    \"name\":\"영양갱\",\n    \"image_url\":\"\",\n    \"price\":2500.0,\n    \"stock\":10\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -221,12 +195,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}menu/all",
+					"raw": "{{baseURL}}menu/all/for/user",
 					"host": [
 						"{{baseURL}}menu"
 					],
 					"path": [
-						"all"
+						"all",
+						"for",
+						"user"
 					]
 				}
 			},
@@ -288,7 +264,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n    {\n        \"menu_id\":\"b37b2fb7-dde3-4ec3-91f3-fa2f69329384\",\n        \"quantity\":3\n    }\n  \n]",
+					"raw": "[\n    {\n        \"menu_id\":\"a431a96e-0758-485b-bd57-f4eb23cd1156\",\n        \"quantity\":1\n    }\n  \n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -296,12 +272,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}order/add",
+					"raw": "{{baseURL}}order/addOrder",
 					"host": [
 						"{{baseURL}}order"
 					],
 					"path": [
-						"add"
+						"addOrder"
 					]
 				}
 			},
@@ -314,7 +290,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"state\":\"complete\" // waiting pending complate \n}",
+					"raw": "{\n    \"state\":\"pending\" // waiting pending complate \n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -322,13 +298,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}order/update/1a6fd89f-e33e-4a6f-a2df-df378c07d1cb",
+					"raw": "{{baseURL}}order/update/07905aa3-cc50-45a7-a5de-bfab5d76e7e1",
 					"host": [
 						"{{baseURL}}order"
 					],
 					"path": [
 						"update",
-						"1a6fd89f-e33e-4a6f-a2df-df378c07d1cb"
+						"07905aa3-cc50-45a7-a5de-bfab5d76e7e1"
 					]
 				}
 			},
@@ -340,13 +316,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}order/delete/92eaf06d-fea2-4d7c-86bc-d3ad29b76ca7",
+					"raw": "{{baseURL}}order/delete/e4913cb0-63ca-4deb-a58d-79f9aeaf9c74",
 					"host": [
 						"{{baseURL}}order"
 					],
 					"path": [
 						"delete",
-						"92eaf06d-fea2-4d7c-86bc-d3ad29b76ca7"
+						"e4913cb0-63ca-4deb-a58d-79f9aeaf9c74"
 					]
 				}
 			},
@@ -358,13 +334,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}menu/delete/c04b651f-564c-4221-8ca3-1dd1b78dc710",
+					"raw": "{{baseURL}}menu/delete/a66d9cec-6cc8-43a1-ac6c-6cf2b339bb0c",
 					"host": [
 						"{{baseURL}}menu"
 					],
 					"path": [
 						"delete",
-						"c04b651f-564c-4221-8ca3-1dd1b78dc710"
+						"a66d9cec-6cc8-43a1-ac6c-6cf2b339bb0c"
 					]
 				}
 			},
@@ -383,6 +359,33 @@
 					"path": [
 						"user",
 						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "menu/add/menu",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"추어탕5\",\n    \"image_url\":\"sd\",\n    \"price\":1255.0,\n    \"stock\":10\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}menu/add/menu",
+					"host": [
+						"{{baseURL}}menu"
+					],
+					"path": [
+						"add",
+						"menu"
 					]
 				}
 			},

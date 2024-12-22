@@ -26,9 +26,8 @@ const CustomSvgWrapper: React.FC<SvgWrapperProps> = ({
       <ReactSVG
         src={src}
         beforeInjection={(svg) => {
-          svg.setAttribute('style', `width: ${s_full}; height: ${s_full}`); // 设置SVG大小
+          svg.setAttribute('style', `width: ${s_full}; height: ${s_full}`);
 
-          // 设置 SVG 的 fill 颜色
           if (color) {
             svg.querySelectorAll('path').forEach((path) => {
               path.setAttribute('fill', color);

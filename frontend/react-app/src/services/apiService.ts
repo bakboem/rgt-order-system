@@ -7,6 +7,9 @@ import {  token_expired_event_name } from '../config/statics';
 import { ApiHooks } from '../models/apiHooks';
 import { getToken, isTokenValid } from '../utils/tokenUtils';
 import { emit,throttleEmit } from "./emitServer";
+
+
+// Deserialize JSON to a class instance / JSON 데이터를 클래스 인스턴스로 변환
 function deserialize<T>(cls: new (...args: any[]) => T, json: any): T {
   const instance = new cls();
 
@@ -79,6 +82,9 @@ const filterHeaders = (headers: HeadersInit): Record<string, string> => {
 
 const staticHeaders = filterHeaders(apiBaseSetting.defaultHeaders);
 
+
+
+//*** */ Main API request function / 메인 API 요청 함수 ***
 export async function apiRequest<T>(
   requestType: ApiRequestType,
   requestBody?: ApiRequestTypeBodyModel,

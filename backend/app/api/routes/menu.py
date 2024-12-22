@@ -20,14 +20,12 @@ async def get_db():
     async with async_session() as db:
         yield db
 
-# 获取当前企业的所有菜单
 @router.get("/all/for/biz", response_model=list[MenuWithStock])
 async def get_all_menus(db: AsyncSession = Depends(get_db),current_user: BizToken = Depends(get_current_biz_user)):
     result =await  db.execute(
         select(Menu).filter(Menu.status == "available",current_user.id == Menu.biz_id).order_by(desc(Menu.created_at))
     )
     menus = result.scalars().all()
-    # Get stock for each menu from the Instock table
     response = []
     for menu in menus:
         stock_result = await db.execute(select(Instock).filter(Instock.menu_id == menu.id))
@@ -107,23 +105,19 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
     )
 
 
-# 更新菜单
 @router.put("/update/{menu_id}", response_model=MenuUpdate)
 async def update_menu(menu_id: UUID, menu: MenuUpdate, db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
-    # 查找菜单，确保菜单属于当前企业
     result = await db.execute(select(Menu).filter(Menu.id == menu_id, Menu.biz_id == current_user.id))
     existing_menu = result.scalars().first()
     if not existing_menu:
         raise HTTPException(status_code=404, detail="Menu not found or unauthorized to update")
 
-    # 更新菜单信息
     for key, value in menu.model_dump(exclude_unset=True).items():
         setattr(existing_menu, key, value)
 
     await db.commit()
     await db.refresh(existing_menu)
 
-    # RabbitMQ 广播菜单更新消息
     message = {
         "type":"menu_update",
         "data":[
@@ -171,7 +165,6 @@ async def update_stock(
     await db.refresh(instock)
 
 
-  # RabbitMQ 广播库存更新消息
     message = {
         "type": "stock_update",
         "data": [
@@ -191,29 +184,24 @@ async def update_stock(
 
 @router.get("/{menu_id}/stock", response_model=int)
 async def get_stock_by_menu(menu_id: UUID, db: AsyncSession = Depends(get_db)):
-    # 查询库存表，找到与菜单对应的库存
     result = await db.execute(select(Instock).filter(Instock.menu_id == menu_id))
     instock = result.scalars().first()
     if instock is None:
         raise HTTPException(status_code=404, detail="Stock information not found for this menu")
     
-    # 返回库存数量
     return instock.stock_quantity
 
 
 @router.delete("/delete/{menu_id}", response_model=dict)
 async def delete_menu(menu_id: UUID, db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
-    # 查询菜单
     result = await db.execute(select(Menu).filter(Menu.id == menu_id))
     menu = result.scalars().first()
     if not menu:
         raise HTTPException(status_code=404, detail=f"Menu with id {menu_id} not found")
 
-    # 检查当前用户是否是该菜单的拥有者
     if menu.biz_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this menu")
 
-    # 检查是否有任何状态为 "pending" 的订单
     result = await db.execute(
         select(Order).filter(Order.id == menu_id, Order.state == "pending")
     )
@@ -221,11 +209,9 @@ async def delete_menu(menu_id: UUID, db: AsyncSession = Depends(get_db), current
     if pending_orders:
         raise HTTPException(status_code=400, detail=f"Cannot deactivate menu with id {menu_id} because there are pending orders")
 
-    # 将菜单状态设置为不可用（"unavailable"）
     menu.status = "unavailable"
     await db.commit()
 
-    # RabbitMQ 广播菜单删除消息
     message = {
         "type": "menu_delete",
         "data":[

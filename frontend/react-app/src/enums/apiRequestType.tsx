@@ -19,7 +19,6 @@ export enum ApiRequestType {
   WHOAMI_BIZ = "WHOAMIBIZ"
 }
 
-// 自定义反向查找函数
 function getEnumKeyByValue(value: string): string | undefined {
   return (
     Object.keys(ApiRequestType) as Array<keyof typeof ApiRequestType>

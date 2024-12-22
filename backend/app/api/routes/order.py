@@ -12,9 +12,6 @@ from app.messageQueue.producer import rabbitmq_producer
 router = APIRouter()
 
 async def get_db():
-    """
-    获取异步数据库会话对象。
-    """
     async with async_session() as db:
         yield db
 
@@ -25,9 +22,9 @@ async def get_all_orders_for_user(db: AsyncSession = Depends(get_db), current_us
         select(Order)
         .filter(Order.user_id == user_id, Order.state != "completed")
         .options(
-            joinedload(Order.menu).joinedload(Menu.instock),  # 预加载菜单和库存
-            joinedload(Order.biz),                           # 预加载商家信息
-            joinedload(Order.user)                           # 预加载用户信息
+            joinedload(Order.menu).joinedload(Menu.instock),  
+            joinedload(Order.biz),                           
+            joinedload(Order.user)                           
         ).order_by(desc(Order.created_at))
     )
     orders = result.scalars().all()
@@ -106,13 +103,11 @@ async def add_orders(
     new_orders = []
 
     for order in orders:
-        # 查询菜单
         result = await db.execute(select(Menu).filter(Menu.id == order.menu_id))
         menu = result.scalar_one_or_none()
         if not menu:
             raise HTTPException(status_code=404, detail=f"Menu with id {order.menu_id} not found")
         
-        # 查询库存
         result = await db.execute(select(Instock).filter(Instock.menu_id == order.menu_id))
         instock = result.scalar_one_or_none()
         if not instock:
@@ -121,7 +116,6 @@ async def add_orders(
         if instock.stock_quantity < order.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for menu id {order.menu_id}")
 
-        # 创建订单
         new_order = Order(
             menu_id=order.menu_id, 
             quantity=order.quantity, 
@@ -130,13 +124,11 @@ async def add_orders(
         )
         new_orders.append(new_order)
 
-        # 减库存
         instock.stock_quantity -= order.quantity
 
     db.add_all(new_orders)
     await db.commit()
 
-        # 创建订单响应列表
     order_responses = []
     for new_order in new_orders:
         item = {
@@ -153,18 +145,16 @@ async def add_orders(
                 "stock":instock.stock_quantity,
                 "image_url":menu.image_url,
             },
-            "biz_name":None,  # 可以额外查询 biz_name 或在广播逻辑中解析
+            "biz_name":None,  
             "user_name":current_user.user_name
         }
         order_responses.append(item)
 
-    # 打包成一个消息
     message = {
         "type":"order_add",
         "data":order_responses
     }
 
-    # RabbitMQ 广播一次
     await rabbitmq_producer.publish_message(
         routing_key="orders",
         message=message
@@ -179,15 +169,14 @@ async def update_order_status(
     db: AsyncSession = Depends(get_db),
     current_user: BizToken = Depends(get_current_biz_user),
 ):
-    async with db.begin():  # 开启事务
-        # 查询订单并预加载所需数据
+    async with db.begin():  
         result = await db.execute(
             select(Order)
             .filter(Order.id == order_id)
             .options(
-                joinedload(Order.menu).joinedload(Menu.instock),  # 预加载菜单和库存
-                joinedload(Order.biz),                           # 预加载商家信息
-                joinedload(Order.user)                           # 预加载用户信息
+                joinedload(Order.menu).joinedload(Menu.instock), 
+                joinedload(Order.biz),                          
+                joinedload(Order.user)                          
             )
         )
         order = result.scalar_one_or_none()
@@ -195,15 +184,12 @@ async def update_order_status(
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
 
-        # 验证权限
         if order.biz_id != current_user.id:
             raise HTTPException(status_code=403, detail="Unauthorized to update this order")
 
-        # 更新订单状态
         order.state = order_update.state
-        await db.flush()  # 提交更改但保持事务
+        await db.flush()  
 
-        # 准备响应数据
         order_response = OrderResponse(
             id=order.id,
             state=order.state,
@@ -222,7 +208,6 @@ async def update_order_status(
             user_name=order.user.username,
         )
 
-        # 准备消息
         message = {
             "type": "order_update",
             "data": [
@@ -235,7 +220,6 @@ async def update_order_status(
             ]
         }
 
-        # 使用 RabbitMQ 广播
         await rabbitmq_producer.publish_message(
             routing_key="orders",
             message=message
@@ -246,7 +230,6 @@ async def update_order_status(
 
 @router.delete("/delete/{order_id}", response_model=dict)
 async def delete_order(order_id: UUID, db: AsyncSession = Depends(get_db)):
-    # 查询订单并预加载相关数据
     result = await db.execute(
         select(Order)
         .options(

@@ -31,7 +31,7 @@ const CustomText: React.FC<CustomTextProps> = ({
   textKey,
   children,
 }) => {
-  const theme = useTheme(); // 获取主题
+  const theme = useTheme();
   const { t } = useTranslation();
 
   const translatedText = textKey ? t(textKey) : children;
@@ -43,7 +43,7 @@ const CustomText: React.FC<CustomTextProps> = ({
       color={color === 'inherit' ? theme.palette.text.primary : color}
       sx={{
         fontFamily:
-          theme.typography[variant]?.fontFamily || theme.typography.fontFamily, // 从主题中获取字体
+          theme.typography[variant]?.fontFamily || theme.typography.fontFamily, 
       }}
     >
       {translatedText}

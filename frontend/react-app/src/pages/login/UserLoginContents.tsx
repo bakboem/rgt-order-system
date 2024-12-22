@@ -47,7 +47,6 @@ const UserLoginContents: React.FC = () => {
     } catch (err) {
       console.error("Login failed:", err);
     }
-    // await login(username, password);
   };
   const userNameInputText = "아이디";
   const userPasswordInputText = "비밀번호";

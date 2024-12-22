@@ -6,9 +6,9 @@ import { s_buttonWidth } from '../style/size';
 import { borderButtonSx } from '../style/sx/buttonSx';
 
 interface CustomBorderButtonProps {
-  onClick: () => void; // 按钮点击事件处理器
-  children: React.ReactNode; // 按钮的子元素内容
-  sx?: SxProps<Theme>; // 可选的自定义样式
+  onClick: () => void;
+  children: React.ReactNode;
+  sx?: SxProps<Theme>;
 }
 
 const CustomBorderButton: React.FC<CustomBorderButtonProps> = ({
@@ -19,12 +19,7 @@ const CustomBorderButton: React.FC<CustomBorderButtonProps> = ({
   const { width = s_buttonWidth }: any = sx;
 
   return (
-    <Box
-      sx={{
-        width,
-        // 将 width 作用到 Box
-      }}
-    >
+    <Box sx={{ width }}>
       <Button
         {...borderButtonPropsMap}
         sx={{ ...borderButtonSx, ...sx }}

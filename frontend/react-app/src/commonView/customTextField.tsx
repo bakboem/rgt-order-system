@@ -18,14 +18,14 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
   value,
   onChange,
   sx,
-  type = 'text', // 默认类型是文本
-  maxLength = 200, // 默认最大字符长度为 200
+  type = 'text', 
+  maxLength = 200, 
   width,
   labelKey,
 }) => {
   const { t } = useTranslation();
 
-  // 如果传入了 labelKey，则使用翻译后的值；否则使用原始的 label
+  
   const translatedLabel = t(labelKey);
 
   return (
@@ -36,11 +36,11 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
         fullWidth
         value={value}
         onChange={onChange}
-        type={type} // 控制输入类型
+        type={type} 
         slotProps={{
           htmlInput: { maxLength: maxLength },
         }}
-        sx={sx ? sx : defaultTextfieldButtonSx} // 自定义样式
+        sx={sx ? sx : defaultTextfieldButtonSx} 
       />
     </Box>
   );

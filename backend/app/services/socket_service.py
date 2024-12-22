@@ -64,5 +64,5 @@ class WebSocketService:
                 await self.disconnect_biz(websocket, biz_id)
 
 
-# 创建 WebSocket 服务实例
+
 websocket_service = WebSocketService()

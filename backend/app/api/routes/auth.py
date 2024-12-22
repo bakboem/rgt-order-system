@@ -9,15 +9,11 @@ from app.db.session import async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
-# 依赖注入：获取数据库会话
 async def get_db():
-    """
-    获取异步数据库会话对象。
-    """
+
     async with async_session() as db:
         yield db
 
-# 用户登录
 @router.post("/login/user", response_model=Token)
 async def user_login(login: LoginRequest, db: AsyncSession = Depends(get_db)):
     result =await db.execute(select(User).filter(User.username == login.username))
@@ -27,7 +23,6 @@ async def user_login(login: LoginRequest, db: AsyncSession = Depends(get_db)):
     access_token = create_access_token(data={"sub": user.username,"role": "user"}, expires_delta=timedelta(minutes=30))
     return {"access_token": access_token}
 
-# 企业用户登录
 @router.post("/login/biz", response_model=Token)
 async def biz_login(login: LoginRequest, db: AsyncSession = Depends(get_db)):
     result =await db.execute(select(Biz).filter(Biz.biz_name == login.username))

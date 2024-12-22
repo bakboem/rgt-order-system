@@ -1,3 +1,8 @@
+import os
+import sys
+
+print("Current Working Directory:", os.getcwd())
+print("PYTHONPATH:", sys.path)
 from asyncio import Task, create_task
 import logging
 from fastapi import FastAPI
@@ -13,7 +18,15 @@ from app.messageQueue.consumer import RabbitMQConsumer  # 修改为导入类
 from app.messageQueue.queue_config import setup_queues
 from app.db.session import engine
 from app.services.socket_service import WebSocketService
+from dotenv import load_dotenv
+import os
 
+# 加载 .env 文件
+load_dotenv()
+
+# 获取环境变量
+test_var = os.getenv("TEST_VAR")
+print(f"Loaded ENV variable TEST_VAR: {test_var}")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("RGT-Order-System")
 @asynccontextmanager

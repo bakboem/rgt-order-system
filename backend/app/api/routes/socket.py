@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 @router.websocket("/user/{user_id}")
 async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):
-    """用户登录后连接，监听订单状态更新和处理自定义消息"""
     await websocket_service.connect_user(websocket, user_id)
     try:
         while True:
@@ -23,7 +22,6 @@ async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):
 
 @router.websocket("/biz/{biz_id}")
 async def websocket_biz_endpoint(websocket: WebSocket, biz_id: UUID):
-    """企业主登录后连接，监听订单状态更新和处理自定义消息"""
     await websocket_service.connect_biz(websocket, biz_id)
     try:
         while True:

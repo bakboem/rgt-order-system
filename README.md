@@ -1,82 +1,83 @@
 #### This is a skill test question before an interview, from RGT company
 
-# Order Management System
-This is a full-stack order management system built with React for the frontend and FastAPI for the backend. The system supports both user and business roles, enabling real-time order updates using WebSocket and providing essential RESTful API services.
+## 개발버전 -> 배포버전 전환시 파일 수정해야 할 때
+- 전체 프로젝트 “#NEED CHANGE” 검색 후 해당 파일에서 주석 해지요망.
 
-## User Features
-- User login with **JWT-based authentication**
-- View the menu of food items from different businesses.
-- Place orders with a specified quantity and submit them to the backend.
-- Real-time order tracking via **WebSocket**, with live updates on status
-- Ability to cancel orders that have not yet been accepted.
+## 계정 관견
+- 사용자 계정 id pw 동일 rgt1  rgt2
+- Biz 계정 id pw 동일 biz1 biz2
 
-## Biz Features
-- Biz login with **JWT-based authentication**
-- View all incoming orders and their statuses (e.g., pending, accepted, processing, completed).
-- Accept and update order statuses with a single click.
-- Real-time notifications for new orders through WebSocket subscriptions.
-- Manage menus and inventory levels.
+## Frontend 사용설명서 
 
-## Backend Features
-- RESTful API implementation for core functionalities:
-  - /user_login: User authentication
-  - /business_login: Biz authentication.
-  - /order: Place a new order with validation.
-  - /cancel_order: Cancel pending orders.
-  - /get_orders: Retrieve orders for a specific business.
-  - /set-menu-and-instore: Update menus and inventory.
-- WebSocket server for full-duplex real-time messaging.
-- Simulated kitchen automation to process orders:
-  - Concurrently process up to 2 orders at a time.
-  - Fixed 10-second preparation time for each order.
-  - The quantity cannot be negative or out of stock
+### 사용자구분 
+- user -> 일반계정 사용자
+- bizUser -> 비즈니스계정 사용자.
 
-## Data Management
-The backend uses in-memory data storage with the following structures:
-### Users Table:
+### 로그인 관련
+- user 와 bizUser JWT 세션 각별 관리
+- JWT 유효기한 만료후 API 요청시 로그인 화면으로 라우팅.
+
+### 계정전환
+- 화면 우측 상단 Change버튼 누르면 로그인 방삭 선택 화면으로 이동 . 
+
+### 메인Page위치 
+- src > pages > EntryPage.tsx
+
+### WebSocket통신 관련
+
+*  Socket Message 
 ```
 {
-  "u_id": "UUID",
-  "u_name": "string",
-  "u_password": "encrypted"
+  “type: string,
+  “data”: [object]
 }
 ```
-### Biz Table:
-```
-{
-  "e_id": "UUID",
-  "e_name": "string",
-  "e_password": "encrypted"
-}
-```
-### Menus Table:
-```
-{
-  "m_id": "UUID",
-  "m_name": "string",
-  "m_img_url": "string",
-  "m_price": "double",
-  "m_instore": "int"
-}
-```
-### Orders Table:
-```
-{
-  "o_id": "UUID",
-  "o_state": "string",
-  "e_id": "UUID",
-  "m_id": "UUID",
-  "u_id": "UUID"
-}
-```
+- 현재 message type은 “order_update”,”menu_update”,”menu_delte”,”menu_add”으로 구분된다.
 
-## Infrastructure and CI/CD Integration
-- **Terraform** is utilized for defining and managing the infrastructure as code, including VPC, EC2 instances, and security groups.
-- Integrated **GitHub Actions** for a streamlined CI/CD pipeline, automating the deployment and infrastructure updates:
-  - Validates Terraform configuration and plans changes.
-  - Automatically provisions or updates infrastructure.
-  - Deploys the latest backend and frontend code after successful tests.
-  - Dynamic handling of instance roles and configurations via SSM parameters.
-  - Ensures zero-downtime deployment and rollback strategies.
+*  Socket Callback 
+- Page에서 type 별로 callback 지정 Registor 가능 하며 . 여러개 추가도 가능 하다.
+- Callback에서 상태관리 가능하다.
+
+* Socket Buffering Layer 
+- 동시다발 대비하여 생산자 소비자 비즈니스 모듈로 Buffering Layer 추가.
+
+
+## Backend 사용설명서 
+
+### JWT 관련
+- JWT 만료시간은 15분이다.
+- JWT 갱신로직 포함 되지 않음.
+
+### WebSocket 관련 
+- 연결 했던 소켓자원 재사용 하기 위해 Socket Pool 도입.
+- 동시 처리능력 상향 하기 위해 Rabbit Task 도입.
+- Rabbit Task는 확장과 병열치리 가능한 다중 소비자로 구현 됨.
   
-This approach improves maintainability, reduces manual efforts, and ensures consistency across deployments.
+### DB 관련
+- 비동기 처리에 강한 postgreSQL Diver 선택 했음.
+
+## 인프라 설명서
+- 시간상 인프라 까지 CI/CD에 추가 하지 못했음. 
+- AWS 기반 terraform 자동 자원관리 배포 로직 포함 됨.
+- 
+
+# 프로젝트 Run 하는 방법.
+
+## 환경 세팅.
+- Install Docker,Node, 
+- pip install poetry
+
+
+### RUN 
+- git clone https://github.com/bakboem/rgt-order-system.git
+- cd rgt-order-system
+
+- docker-compose -f ./docker-compose-dev.yml up --build -d
+
+- poetry install --no-root
+- poetry shell
+- uvicorn main:app --reload --host 0.0.0.0 --port 8000
+  
+
+- cd frontend/react-app
+- yarn start
