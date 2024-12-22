@@ -90,7 +90,7 @@ export function useChangeOrderStateFunc() {
     if (isFetching.current) return;
     isFetching.current = true;
     const body = {
-      state: state, //
+      state: state, 
     };
     const requestBody: ApiRequestTypeBodyModel = {
       body: body,
@@ -118,4 +118,41 @@ export function useChangeOrderStateFunc() {
     }
   };
   return { changeOrderStateFunc };
+}
+
+
+export function useDeleteMenuFunc() {
+  const isFetching = useRef(false);
+  const deleteMenuFunc = async (
+    menuId:string,
+    callback: () => void,
+  ) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+ 
+    const requestBody: ApiRequestTypeBodyModel = {
+      params:{id:menuId}
+    };
+
+    try {
+      const response = await apiRequest<{}>(
+        ApiRequestType.MENU_DELETE,
+        requestBody,
+      );
+
+      if (response) {
+        callback();
+        try {
+          console.log(response);
+        } catch (error) {
+          console.warn('menu response is not Typeof (MenuResponseModel)');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch Menu:', error);
+    } finally {
+      isFetching.current = false;
+    }
+  };
+  return { deleteMenuFunc };
 }

@@ -7,8 +7,8 @@ import {
   OrderResponseModel,
 } from '../../../models/responseModels';
 import CustomButton from '../../../commonView/customButton';
-import { c_primary, c_sub_text, c_warning } from '../../../style/colors';
-import { useChangeOrderStateFunc } from '../../../state/bizPageState/hooks';
+import {  c_primary, c_second, c_sub_text, c_warning } from '../../../style/colors';
+import { useChangeOrderStateFunc, useDeleteMenuFunc } from '../../../state/bizPageState/hooks';
 import { showSuccessToast } from '../../../utils/toastUtil';
 
 type TableRowProps = {
@@ -19,9 +19,9 @@ type TableRowProps = {
 
 const OrderTableRow: React.FC<TableRowProps> = React.memo(
   ({ order, menu, bizOrder }) => {
-
-    const {changeOrderStateFunc} = useChangeOrderStateFunc();
-
+    const { changeOrderStateFunc } = useChangeOrderStateFunc();
+    const { deleteMenuFunc } = useDeleteMenuFunc();
+    
     return order && menu == null && bizOrder == null ? (
       <TableRow key={order.id}>
         <TableCell sx={cellSx}>
@@ -30,13 +30,20 @@ const OrderTableRow: React.FC<TableRowProps> = React.memo(
         <TableCell sx={cellSx}>
           <Box sx={defaultContainerRowSx}> {order.quantity}</Box>
         </TableCell>
+        
         <TableCell sx={cellSx}>
           <Box sx={defaultContainerRowSx}>
+            <CustomText color={order.state === 'waiting'
+              ? c_second
+              : order.state === 'pending'
+                ? c_primary
+                :c_warning}>
             {order.state === 'waiting'
               ? '접수대기'
               : order.state === 'pending'
                 ? '처리중'
                 : '처리완료'}
+            </CustomText>
           </Box>
         </TableCell>
       </TableRow>
@@ -51,6 +58,28 @@ const OrderTableRow: React.FC<TableRowProps> = React.memo(
         <TableCell sx={cellSx}>
           <Box sx={defaultContainerRowSx}> {menu.stock}</Box>
         </TableCell>
+        <TableCell sx={cellSx}>
+          <Box sx={defaultContainerRowSx}>
+            {
+              <CustomButton
+                sx={{
+                  backgroundColor: c_warning,
+                }}
+                onClick={async () => {
+                    try {
+                      deleteMenuFunc(menu.id,()=>{
+                        // showSuccessToast('메뉴가 삭제됐습니다.');
+                      })
+                    } catch (error) {
+                      
+                    }
+                }}
+              >
+                {'메뉴삭제'}
+              </CustomButton>
+            }
+          </Box>
+        </TableCell>
       </TableRow>
     ) : bizOrder && order == null && menu == null ? (
       <TableRow key={bizOrder.id}>
@@ -60,6 +89,7 @@ const OrderTableRow: React.FC<TableRowProps> = React.memo(
         <TableCell sx={cellSx}>
           <Box sx={defaultContainerRowSx}> {bizOrder.quantity}</Box>
         </TableCell>
+        
         <TableCell sx={cellSx}>
           <Box sx={defaultContainerRowSx}>
             {' '}
@@ -83,10 +113,14 @@ const OrderTableRow: React.FC<TableRowProps> = React.memo(
                         : c_primary,
                 }}
                 onClick={async () => {
-                  if (bizOrder.state !=='complate') {
-                    changeOrderStateFunc (bizOrder.id, bizOrder.state==='waiting'?'pending':'complate' ,()=>{
-                      showSuccessToast('정상적으로 처리하였습니다');
-                    });
+                  if (bizOrder.state !== 'complate') {
+                    changeOrderStateFunc(
+                      bizOrder.id,
+                      bizOrder.state === 'waiting' ? 'pending' : 'complate',
+                      () => {
+                        showSuccessToast('정상적으로 처리하였습니다');
+                      },
+                    );
                   }
                 }}
               >

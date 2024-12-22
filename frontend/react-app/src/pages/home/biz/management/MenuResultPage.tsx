@@ -13,6 +13,7 @@ const MenuResultPage: React.FC = () => {
   const menuNameStr = "메뉴명";
   const orderPriceStr = "단가";
   const menuInstockStr = "재고";
+  const menuManagermentStr = "메뉴관리";
   const { menus } = useGetBizMenuList();
   return (
     <Box
@@ -39,6 +40,9 @@ const MenuResultPage: React.FC = () => {
             </TableCell>
             <TableCell sx={cellSxBolt}>
               <Box sx={cellRowSx}>{menuInstockStr}</Box>
+            </TableCell>
+            <TableCell sx={cellSxBolt}>
+              <Box sx={cellRowSx}>{menuManagermentStr}</Box>
             </TableCell>
           </TableRow>
         </TableHead>

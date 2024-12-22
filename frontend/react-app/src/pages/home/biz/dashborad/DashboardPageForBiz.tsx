@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable array-callback-return */
-import { Box } from '@mui/material';
 import React, { useEffect } from 'react';
-import CustomText from '../../../../commonView/customText';
 import timerService from '../../../../services/timerService';
 import SocketUtils from '../../../../utils/socketUtil';
 import webSocketService from '../../../../services/webSocketService';

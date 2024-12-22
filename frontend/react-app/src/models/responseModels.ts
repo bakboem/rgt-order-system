@@ -102,6 +102,18 @@ export class OrderResponseModel {
   }
 }
 
+export class MenuUpdateModel {
+  menu_id: string;
+  biz_id: string;
+
+
+  constructor(menu_id:string,biz_id:string) {
+  
+    this.menu_id = menu_id;
+    this.biz_id = biz_id;
+
+  }
+}
 export class CommonResponseModel {
   message: string;
 

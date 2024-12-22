@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CommonResponseModel, MenuRequestModel, MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
+import { CommonResponseModel, MenuRequestModel, MenuResponseModel, MenuUpdateModel, OrderResponseModel } from "../../models/responseModels";
 import { apiRequest } from "../../services/apiService";
 import { ApiRequestType } from "../../enums/apiRequestType";
 import { useRecoilState } from "recoil";
@@ -9,6 +9,7 @@ import { useRef } from "react";
 import { ApiRequestTypeBodyModel } from "../../models/apiRequestBodyModels";
 import { CreateOrderModel } from "../../models/requestModels";
 import { bizMenuListState } from "../bizPageState/atoms";
+import { showSuccessToast } from "../../utils/toastUtil";
 
 
 export function useRequestMenuList() {
@@ -128,26 +129,24 @@ export function useUpdateUserOrderState() {
 }
 
 
-export function useUpdateBizMenuState() {
+export function useDeleteBizMenuState() {
   const [orders, setMenuList] = useRecoilState(bizMenuListState);
 
-  const updateMenuState = (updateMenu: MenuResponseModel) => {
-    if (updateMenu.id && updateMenu.stock&& updateMenu.name&& updateMenu.price) {
-      setMenuList((prevOrders) => {
-        const orderIndex = prevOrders.findIndex((order) =>  order.id === updateMenu.id);
-        if (orderIndex !== -1) {
-          const updatedOrders = [...prevOrders];
-          updatedOrders[orderIndex] = updateMenu;
-          return updatedOrders;
-        } else {
-          console.log("update order successful");
-          return [...prevOrders, updateMenu];
-        }
-      });
+  const deleteMenuState = (updateMenu: MenuUpdateModel) => {
+    if (updateMenu.menu_id && updateMenu.biz_id) {
+      const updatedOrders = orders.filter(
+        (menu) =>
+          menu.id !== updateMenu.menu_id
+
+      );
+      setMenuList(updatedOrders);
+      showSuccessToast('메뉴가 삭제됐습니다.')
     }
   };
-  return updateMenuState;
+
+  return deleteMenuState;
 }
+
 
 
 export function useUpdateBizOrderState() {

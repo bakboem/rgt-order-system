@@ -39,7 +39,9 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
   };
 
   const submmitButtonText = '주문';
-
+  const nameStr = "상품명";
+  const priceStr = "단가";
+  const quantityStr = "주문수량";
   return data.length === 0 ? (
     <CustomText>not data</CustomText>
   ) : (
@@ -49,13 +51,13 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
           <TableHead>
             <TableRow sx={{ backgroundColor: cell_bg }}>
               <TableCell sx={cellSxBolt}>
-                <Box sx={cellRowSx}>Name</Box>
+                <Box sx={cellRowSx}>{nameStr}</Box>
               </TableCell>
               <TableCell sx={cellSxBolt}>
-                <Box sx={cellRowSx}>Price</Box>
+                <Box sx={cellRowSx}>{priceStr}</Box>
               </TableCell>
               <TableCell sx={cellSxBolt}>
-                <Box sx={cellRowSx}>Quantity</Box>
+                <Box sx={cellRowSx}>{quantityStr}</Box>
               </TableCell>
             </TableRow>
           </TableHead>
