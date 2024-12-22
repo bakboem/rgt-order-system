@@ -39,7 +39,7 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
       };
     case ApiRequestType.MENU_ADD:
       return {
-        url: `${apiBaseSetting.baseUrl}/menu/addMenu`,
+        url: `${apiBaseSetting.baseUrl}/menu/add/menu`,
         method: 'POST',
       };
     case ApiRequestType.MENU_UPDATE:
@@ -66,7 +66,7 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         };
     case ApiRequestType.ORDER_ADD:
       return {
-        url: `${apiBaseSetting.baseUrl}/order/addOrder`,
+        url: `${apiBaseSetting.baseUrl}/order/add/order`,
         method: 'POST',
       };
     case ApiRequestType.ORDER_DELETE:

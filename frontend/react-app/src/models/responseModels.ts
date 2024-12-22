@@ -51,6 +51,21 @@ export class BizResponseModel {
   }
 }
 
+
+
+export class MenuRequestModel {
+  name: string;
+  price: number;
+  image_url:string|null;
+  stock: number;
+  constructor(name:string,price :number,stock:number,image_url:string = '') {
+    this.name = name;
+    this.price = price;
+    this.stock = stock;
+    this.image_url = image_url
+  }
+}
+
 export class MenuResponseModel {
   id: string;
   name: string;

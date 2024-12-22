@@ -1,6 +1,5 @@
 import { Box, TableContainer,  Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import CustomButton from "../../../../commonView/customButton";
 import CustomColumnHolder from "../../../../commonView/customColumnHolder";
 import CustomText from "../../../../commonView/customText";
@@ -11,6 +10,7 @@ import { as_center } from "../../../../style/align";
 import { cell_bg } from "../../../../style/colors";
 import { s_full } from "../../../../style/size";
 import { defaultContainerColumnSx, cellSxBolt, cellRowSx, cellSx, defaultContainerRowSx, buttonSx } from "../../../../style/sx/containerSx";
+import { showWarnToast } from "../../../../utils/toastUtil";
 
 
 interface MenuTableListViewProps {
@@ -120,12 +120,7 @@ const OrderRequestPage: React.FC<MenuTableListViewProps> = ({ data }) => {
             if (ordersRequest.length < 1) return;
             await requestCreateOrder(ordersRequest, () => {
               console.log('Quantities reset to:', {});
-              toast.success(messageShow,
-                {
-                  position: 'top-right',
-                  autoClose: 3000
-                },
-              );
+              showWarnToast(messageShow);
               setQuantities({});
             });
           }}

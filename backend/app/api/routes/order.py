@@ -97,7 +97,7 @@ async def get_all_orders_for_biz(db: AsyncSession = Depends(get_db), current_use
     return orders_with_details
 
 
-@router.post("/addOrder", response_model=dict)
+@router.post("/add/order", response_model=dict)
 async def add_orders(
     orders: list[OrderCreate],
     db: AsyncSession = Depends(get_db),

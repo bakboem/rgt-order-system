@@ -61,7 +61,7 @@ async def get_all_menus(db: AsyncSession = Depends(get_db), current_user: BizTok
         ))
     return response
 
-@router.post("/addMenu", response_model=MenuResponse)
+@router.post('/add/menu', response_model=MenuResponse)
 async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current_user: BizToken = Depends(get_current_biz_user)):
     result = await db.execute(select(Menu).filter(Menu.name == menu.name, Menu.biz_id == current_user.id))
     existing_menu = result.scalar_one_or_none()

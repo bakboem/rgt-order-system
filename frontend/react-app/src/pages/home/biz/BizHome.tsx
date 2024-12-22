@@ -34,7 +34,7 @@ const BizHome: React.FC = () => {
       {
         content: <BizHomeContents />,
         size: 12,
-        height: s_full,
+        height: '500px',
       },
     ],
     rowSpacing: 1,
@@ -42,7 +42,7 @@ const BizHome: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: s_full, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: s_full, width:s_full, display: 'flex', flexDirection: 'column' }}>
       <>{generateGridLayout(layoutConfigs)}</>
     </Box>
   );
