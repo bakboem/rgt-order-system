@@ -93,6 +93,7 @@ class MenuResponse(BaseModel):
     name: str
     image_url: Optional[str] = None
     price: float
+    stock: int
     class Config:
         orm_mode = True
 

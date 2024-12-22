@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CommonResponseModel, MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
+import { CommonResponseModel, MenuRequestModel, MenuResponseModel, OrderResponseModel } from "../../models/responseModels";
 import { apiRequest } from "../../services/apiService";
 import { ApiRequestType } from "../../enums/apiRequestType";
 import { useRecoilState } from "recoil";
-import { homeMenuListState, userOrderListState } from "./atoms";
+import { bizOrderListState, homeMenuListState, userOrderListState } from "./atoms";
 import { plainToInstance } from "class-transformer";
 import { useRef } from "react";
 import { ApiRequestTypeBodyModel } from "../../models/apiRequestBodyModels";
 import { CreateOrderModel } from "../../models/requestModels";
+import { bizMenuListState } from "../bizPageState/atoms";
 
 
 export function useRequestMenuList() {
-    const [menus, setMenu] = useRecoilState(homeMenuListState);
+    const [menus, setMenuForUser] = useRecoilState(homeMenuListState);
     const isFetching = useRef(false);
-    const requestMenu= async () => {
+    const requestMenuAllForUser= async () => {
         if (isFetching.current) return; // 防止重复请求
         isFetching.current = true;
       try {
@@ -28,7 +29,7 @@ export function useRequestMenuList() {
         if (response) {
             console.log(response);
             const result = plainToInstance(MenuResponseModel, response);
-            setMenu([...result]);
+            setMenuForUser([...result]);
         }
   
         // 将转换后的实例列表赋值给 patients
@@ -38,7 +39,7 @@ export function useRequestMenuList() {
         isFetching.current = false;
       }
     };
-    return {menus, requestMenu };
+    return {menus, requestMenuAllForUser };
   }
   
 export function useCreateOrder() {
@@ -127,10 +128,32 @@ export function useUpdateUserOrderState() {
 }
 
 
-export function useUpdateBizOrderState() {
-  const [orders, setOrderList] = useRecoilState(userOrderListState);
+export function useUpdateBizMenuState() {
+  const [orders, setMenuList] = useRecoilState(bizMenuListState);
 
-  const updateOrderState = (updateOrder: OrderResponseModel) => {
+  const updateMenuState = (updateMenu: MenuResponseModel) => {
+    if (updateMenu.id && updateMenu.stock&& updateMenu.name&& updateMenu.price) {
+      setMenuList((prevOrders) => {
+        const orderIndex = prevOrders.findIndex((order) =>  order.id === updateMenu.id);
+        if (orderIndex !== -1) {
+          const updatedOrders = [...prevOrders];
+          updatedOrders[orderIndex] = updateMenu;
+          return updatedOrders;
+        } else {
+          console.log("update order successful");
+          return [...prevOrders, updateMenu];
+        }
+      });
+    }
+  };
+  return updateMenuState;
+}
+
+
+export function useUpdateBizOrderState() {
+  const [orders, setOrderList] = useRecoilState(bizOrderListState);
+
+  const updateOrderStateForBiz = (updateOrder: OrderResponseModel) => {
     setOrderList((prevOrders) => {
       const orderIndex = prevOrders.findIndex((order) => order.id === updateOrder.id);
       if (orderIndex !== -1) {
@@ -142,7 +165,7 @@ export function useUpdateBizOrderState() {
       }
     });
   };
-  return updateOrderState;
+  return updateOrderStateForBiz;
 }
 
 
@@ -172,6 +195,35 @@ export function useRequestOrderList() {
     }
   };
   return {orders, requestOrder };
+}
+
+
+
+export function useRequestBizOrderList() {
+  const [orders, setOrderList] = useRecoilState(bizOrderListState);
+  const isFetching = useRef(false);
+  const requestBizOrder= async () => {
+      if (isFetching.current) return; // 防止重复请求
+      isFetching.current = true;
+    try {
+      const response = await apiRequest<OrderResponseModel[]>(
+        ApiRequestType.ORDER_ALL_FOR_BIZ,
+      );
+
+      if (response) {
+          console.log(response);
+          const result = plainToInstance(OrderResponseModel, response);
+          setOrderList([...result]);
+      }
+
+      // 将转换后的实例列表赋值给 patients
+    } catch (error) {
+      console.error("Failed to fetch Menu:", error);
+    }finally {
+      isFetching.current = false;
+    }
+  };
+  return {orders, requestBizOrder };
 }
 
 

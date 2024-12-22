@@ -35,13 +35,14 @@ const DashboardPageForUser: React.FC = () => {
             });
             updateOrderState(model);
           } else {
-            console.warn("Invalid order data:", obj);
+            console.warn('Invalid order data:', obj);
           }
         });
       }
     }
   };
 
+  // ***INIT***
   useEffect(() => {
     let isUnmounted = false;
     const initializeSocket = async () => {
@@ -75,7 +76,7 @@ const DashboardPageForUser: React.FC = () => {
       webSocketService.unregisterHandler(orderUpdate);
     };
   }, []);
-  return <TableComponent ></TableComponent>;
+  return <TableComponent></TableComponent>;
 };
 
 export default DashboardPageForUser;

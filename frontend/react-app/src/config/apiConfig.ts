@@ -17,8 +17,11 @@ export interface ApiConfig {
 }
 
 // 生成 API 配置，结合全局的 baseUrl 和每个请求的特定路径
-export function getApiConfig(requestType: ApiRequestType, params?: { id?: string }): ApiConfig {
-  const { id = "default" } = params || {};
+export function getApiConfig(
+  requestType: ApiRequestType,
+  params?: { id?: string },
+): ApiConfig {
+  const { id = 'default' } = params || {};
   switch (requestType) {
     case ApiRequestType.USER_LOGIN:
       return {
@@ -26,7 +29,10 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         method: 'POST',
       };
     case ApiRequestType.BIZ_LOGIN:
-      return { url: `${apiBaseSetting.baseUrl}/auth/login/biz`, method: 'POST' };
+      return {
+        url: `${apiBaseSetting.baseUrl}/auth/login/biz`,
+        method: 'POST',
+      };
     case ApiRequestType.ORDER_ALL_FOR_USER:
       return {
         url: `${apiBaseSetting.baseUrl}/order/all/for/user`,
@@ -34,7 +40,7 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
       };
     case ApiRequestType.ORDER_ALL_FOR_BIZ:
       return {
-        url: `${apiBaseSetting.baseUrl}/order/all/for/user`,
+        url: `${apiBaseSetting.baseUrl}/order/all/for/biz`,
         method: 'GET',
       };
     case ApiRequestType.MENU_ADD:
@@ -43,7 +49,10 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         method: 'POST',
       };
     case ApiRequestType.MENU_UPDATE:
-      return { url: `${apiBaseSetting.baseUrl}/menu/update/${id}`, method: 'PUT' };
+      return {
+        url: `${apiBaseSetting.baseUrl}/menu/update/${id}`,
+        method: 'PUT',
+      };
     case ApiRequestType.MENU_UPDATE_FOR_STOCK:
       return {
         url: `${apiBaseSetting.baseUrl}/menu/update/stock/${id}`,
@@ -59,11 +68,11 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         url: `${apiBaseSetting.baseUrl}/menu/all/for/user`,
         method: 'GET',
       };
-      case ApiRequestType.MENU_ALL_FOR_BIZ:
-        return {
-          url: `${apiBaseSetting.baseUrl}/menu/all/for/biz`,
-          method: 'GET',
-        };
+    case ApiRequestType.MENU_ALL_FOR_BIZ:
+      return {
+        url: `${apiBaseSetting.baseUrl}/menu/all/for/biz`,
+        method: 'GET',
+      };
     case ApiRequestType.ORDER_ADD:
       return {
         url: `${apiBaseSetting.baseUrl}/order/add/order`,
@@ -79,21 +88,21 @@ export function getApiConfig(requestType: ApiRequestType, params?: { id?: string
         url: `${apiBaseSetting.baseUrl}/menu/delete/${id}`,
         method: 'DELETE',
       };
-      case ApiRequestType.ORDER_UPDATE:
-        return {
-          url: `${apiBaseSetting.baseUrl}/update/order/${id}`,
-          method: 'DELETE',
-        };
-        case ApiRequestType.WHOAMI_BIZ:
-          return {
-            url: `${apiBaseSetting.baseUrl}/auth/biz/info`,
-            method: 'GET',
-          };
-          case ApiRequestType.WHOAMI_USER:
-            return {
-              url: `${apiBaseSetting.baseUrl}/auth/user/info`,
-              method: 'GET',
-            };
+    case ApiRequestType.ORDER_UPDATE:
+      return {
+        url: `${apiBaseSetting.baseUrl}/order/update/${id}`,
+        method: 'PUT',
+      };
+    case ApiRequestType.WHOAMI_BIZ:
+      return {
+        url: `${apiBaseSetting.baseUrl}/auth/biz/info`,
+        method: 'GET',
+      };
+    case ApiRequestType.WHOAMI_USER:
+      return {
+        url: `${apiBaseSetting.baseUrl}/auth/user/info`,
+        method: 'GET',
+      };
     default:
       throw new Error(`Unknown request type: ${requestType}`);
   }

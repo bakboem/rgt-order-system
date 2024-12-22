@@ -78,8 +78,6 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
     await db.commit()
     await db.refresh(instock)
     
-    # RabbitMQ 广播菜单新增消息
-      # RabbitMQ 广播菜单新增消息
     message = {
             "type":"menu_add",
             "data":[
@@ -88,7 +86,8 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
                 "name":new_menu.name,
                 "image_url":new_menu.image_url,
                 "price":new_menu.price,
-                "biz_id":str(new_menu.biz_id)
+                "biz_id":str(new_menu.biz_id),
+                "stock":instock.stock_quantity
                 }
             ]
         }

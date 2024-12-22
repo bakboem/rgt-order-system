@@ -84,11 +84,13 @@ export async function apiRequest<T>(
   requestBody?: ApiRequestTypeBodyModel,
   hooks?: ApiHooks,
   cls?: new (...args: any[]) => T, 
+
   retryCount: number = 0, 
 ): Promise<T> {
-  const apiConfigObject = getApiConfig(requestType);
+  
+  const id = requestBody?.params?.id ? String(requestBody.params.id) : undefined;
+  const apiConfigObject = id?  getApiConfig(requestType,{ id }) :getApiConfig(requestType);
   const { params, body, headers = {}, options = {} } = requestBody || {};
-
   let token = getToken();
   if (!isTokenValid(token)) {
     try {

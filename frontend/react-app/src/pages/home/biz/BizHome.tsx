@@ -12,6 +12,8 @@ import ComponentTabBar from '../components/ComponentTabBar';
 
 const BizHome: React.FC = () => {
   const navigate = useNavigate();
+
+  // ***INIT***
   useEffect(() => {
     if (!isActiveBiz()) {
       navigate(login_route_name_for_biz);
