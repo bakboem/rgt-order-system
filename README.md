@@ -8,7 +8,7 @@
 - 사용자 계정 id pw 동일 rgt1  rgt2
 - Biz 계정 id pw 동일 biz1 biz2
 
-## Frontend 사용설명서 
+## Frontend 사용설명
 
 ### 사용자구분 
 - user -> 일반계정 사용자
@@ -43,7 +43,7 @@
 - 동시다발 대비하여 생산자 소비자 비즈니스 모듈로 Buffering Layer 추가.
 
 
-## Backend 사용설명서 
+## Backend 사용설명
 
 ### JWT 관련
 - JWT 만료시간은 15분이다.
@@ -57,11 +57,10 @@
 ### DB 관련
 - 비동기 처리에 강한 PostgreSQL Driver 선택했음.
 
-## 인프라 설명서
+## 인프라 설명
 - 시간상 인프라까지 CI/CD에 추가하지 못했음.
 - AWS 기반 Terraform 자동 자원 관리 배포 로직 포함됨.
 
-# 프로젝트 Run 하는 방법.
 
 ## 환경 세팅
 - Install Docker, Node.js
