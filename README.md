@@ -1,12 +1,8 @@
 
-### This is a skill test question before an interview, from RGT company
-
+### This is a skill assessment project for a pre-interview evaluation with RGT Company in Korea.
 
 ## 동영상.
-<video controls>
-  <source src="./assets/images/play.mp4" type="video/mp4">
-</video>
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tzzhALrxtS4" frameborder="0" allowfullscreen></iframe>
 
 ## 개발버전 -> 배포버전 전환시 파일 수정해야 할 때
 - 전체 프로젝트 “#NEED CHANGE” 검색 후 해당 파일에서 주석 해제 요망.
@@ -76,15 +72,19 @@
 ### RUN 
 - git clone https://github.com/bakboem/rgt-order-system.git
 - cd rgt-order-system
-
+* Postgresql And RabbitMQ
 - docker-compose -f ./docker-compose-dev.yml up --build -d
-
+* Backend
+- cd backend
 - poetry install --no-root
 - poetry shell
 - uvicorn main:app --reload --host 0.0.0.0 --port 8000
-  
-
+* Frontend
 - cd frontend/react-app
 - yarn start
+
+
+
+
 
 
