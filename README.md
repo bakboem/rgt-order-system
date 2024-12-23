@@ -79,3 +79,9 @@
 
 - cd frontend/react-app
 - yarn start
+
+
+
+<video controls>
+  <source src="./assets/play.mp4" type="video/mp4">
+</video>
