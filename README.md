@@ -1,6 +1,13 @@
 
 ### This is a skill test question before an interview, from RGT company
 
+
+## 동영상.
+<video controls>
+  <source src="./assets/play.mp4" type="video/mp4">
+</video>
+
+
 ## 개발버전 -> 배포버전 전환시 파일 수정해야 할 때
 - 전체 프로젝트 “#NEED CHANGE” 검색 후 해당 파일에서 주석 해제 요망.
 
@@ -81,7 +88,3 @@
 - yarn start
 
 
-
-<video controls>
-  <source src="./assets/play.mp4" type="video/mp4">
-</video>
