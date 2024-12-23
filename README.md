@@ -2,7 +2,8 @@
 ### This is a skill assessment project for a pre-interview evaluation with RGT Company in Korea.
 
 ## 동영상.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/tzzhALrxtS4" frameborder="0" allowfullscreen></iframe>
+https://youtu.be/tzzhALrxtS4
+
 
 ## 개발버전 -> 배포버전 전환시 파일 수정해야 할 때
 - 전체 프로젝트 “#NEED CHANGE” 검색 후 해당 파일에서 주석 해제 요망.
