@@ -1,5 +1,5 @@
-import React from 'react';
-import { OrderResponseModel } from '../../../../models/responseModels';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
 import {
   Box,
   Table,
@@ -18,14 +18,26 @@ import {
 import OrderTableRow from '../../components/OrderTableRow';
 import { s_full } from '../../../../style/size';
 import { as_center, as_start } from '../../../../style/align';
-interface AllOrderPageProps {
-  data: OrderResponseModel[];
-}
-const AllOrderPage: React.FC<AllOrderPageProps> = ({ data }) => {
+import { useRequestBizOrderList } from '../../../../state/homePageState/hooks';
+
+const AllOrderPage: React.FC = () => {
   const menuNameStr = '메뉴명';
   const orderQuantitiStr = '주문수량';
   const menuStateStr = '주문상태';
   const menuMenagermentStr = '오더과리';
+
+    const { orders } = useRequestBizOrderList();
+  
+    useEffect(() => {
+      let isUnmounted = false;
+      console.warn("updated add order!!!")
+      if (!isUnmounted) {
+      }
+      return () => {
+        isUnmounted=true;
+      }
+    }, [orders])
+    
   return (
     <Box
       sx={{
@@ -56,12 +68,12 @@ const AllOrderPage: React.FC<AllOrderPageProps> = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((item) => (
+            {orders?.map((order) => (
               <OrderTableRow
-                key={`${item.id}${item.state}`}
+                key={`${order.id}${order.state}`}
                 order={null}
                 menu={null}
-                bizOrder={item}
+                bizOrder={order}
               />
             ))}
           </TableBody>

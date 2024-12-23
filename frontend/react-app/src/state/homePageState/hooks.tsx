@@ -169,6 +169,24 @@ export function useUpdateBizOrderState() {
 
 
 
+export function useAddBizOrderState() {
+  const [orders, setOrderList] = useRecoilState(bizOrderListState);
+
+  const addOrderStateForBiz = (addOrder: OrderResponseModel) => {
+    setOrderList((prevOrders) => {
+      if (prevOrders.some(order => order.id === addOrder.id)) {
+        return prevOrders; 
+      }
+      console.log("the order added !!!");
+     showSuccessToast("새로운 오더가 추가됐습니다.")
+      return [addOrder,...prevOrders];
+     
+    });
+  };
+  return addOrderStateForBiz;
+}
+
+
 export function useRequestOrderList() {
   const [orders, setOrderList] = useRecoilState(userOrderListState);
   const isFetching = useRef(false);

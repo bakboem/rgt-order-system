@@ -6,6 +6,7 @@ import timerService from '../../../../services/timerService';
 import SocketUtils from '../../../../utils/socketUtil';
 import webSocketService from '../../../../services/webSocketService';
 import {
+  useAddBizOrderState,
   useRequestBizOrderList,
   useUpdateBizOrderState,
 } from '../../../../state/homePageState/hooks';
@@ -15,12 +16,15 @@ import AllOrderPage from './AllOrderPage';
 const DashboardPageForBiz: React.FC = () => {
   const eventNames = {
     orderUpdate: 'order_update',
+    orderAdd:'order_add'
   };
-  const { orderUpdate } = eventNames;
-  const { orders, requestBizOrder } = useRequestBizOrderList();
+  const { orderUpdate,orderAdd } = eventNames;
+
   const updateOrderStateForBiz = useUpdateBizOrderState();
+      const { orders, requestBizOrder } = useRequestBizOrderList();
+  const addOrderStateForBiz = useAddBizOrderState();
   const orderUpdateHandleForBiz = (message: any) => {
-    if (message.type === 'order_update') {
+    if (message.type === orderUpdate) {
       if (Array.isArray(message.data)) {
         message.data.map((obj: any) => {
           if (obj?.order_id && obj?.state && obj?.biz_id) {
@@ -37,7 +41,20 @@ const DashboardPageForBiz: React.FC = () => {
       }
     }
   };
-
+  const orderAddHandleForBiz = (message: any) => {
+    if (message.type === orderAdd){
+      if (Array.isArray(message.data)) {
+        message.data.map((obj: any) => {
+          if (obj?.id && obj?.menu_id && obj?.biz_id&&obj?.menu) {
+            addOrderStateForBiz(obj);
+          } else {
+            console.warn('Invalid order data:', obj);
+          }
+        });
+      }
+    }
+  };
+ 
   // ***INIT***
   useEffect(() => {
     let isUnmounted = false;
@@ -46,7 +63,7 @@ const DashboardPageForBiz: React.FC = () => {
         const socketUrl = await SocketUtils.getSocketUrl();
         webSocketService.connect(socketUrl);
         webSocketService.registerHandler(orderUpdate, orderUpdateHandleForBiz);
-
+        webSocketService.registerHandler(orderAdd,orderAddHandleForBiz)
         timerService.start(async () => {
           if (!isUnmounted) {
             const isAlive = await webSocketService.checkAlive();
@@ -64,17 +81,20 @@ const DashboardPageForBiz: React.FC = () => {
       }
     };
     initializeSocket();
-    requestBizOrder();
+    if (!isUnmounted) {
+      requestBizOrder();
+    }
     return () => {
       isUnmounted = true;
       timerService.clear();
       webSocketService.disconnect();
       webSocketService.unregisterHandler(orderUpdate);
+      webSocketService.unregisterHandler(orderAdd);
     };
   }, []);
 
   return (
-     <AllOrderPage data={orders}></AllOrderPage>
+     <AllOrderPage></AllOrderPage>
   );
 };
 
