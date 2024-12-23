@@ -4,7 +4,7 @@
 
 ## 동영상.
 <video controls>
-  <source src="./assets/play.mp4" type="video/mp4">
+  <source src="./assets/images/play.mp4" type="video/mp4">
 </video>
 
 
