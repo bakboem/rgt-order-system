@@ -21,50 +21,54 @@ const boxSx ={ ...defaultContainerColumnSx, ...borderAllSx,   width:"50%" , high
 
 const ManagementPageForBiz: React.FC = () => {
  
-  // *** INIT: Initialize WebSocket and Timer Service / WebSocket 및 Timer 서비스 초기화 ***
+  // INIT: Initialize WebSocket and Timer Service 
   useEffect(() => {
-    let isUnmounted = false; // *** Tracks component unmount status / 컴포넌트 언마운트 상태 추적 ***
-
+    let isUnmounted = false; 
     const initializeSocket = async () => {
       try {
-        const socketUrl = await SocketUtils.getSocketUrl(); // *** Get WebSocket URL / WebSocket URL 가져오기 ***
-
-        webSocketService.connect(socketUrl); // *** Establish WebSocket connection / WebSocket 연결 설정 ***
-        // webSocketService.registerHandler(menuDelete, menuDeleteHandleForBiz); // *** Register handler for menu delete events / 메뉴 삭제 이벤트 핸들러 등록 ***
-
+        const socketUrl = await SocketUtils.getSocketUrl(); 
+        // Establish WebSocket connection 
+        webSocketService.connect(socketUrl); 
         timerService.start(async () => {
           if (!isUnmounted) {
-            const isAlive = await webSocketService.checkAlive(); // *** Check WebSocket connection health / WebSocket 연결 상태 확인 ***
+            // Check WebSocket connection health 
+            const isAlive = await webSocketService.checkAlive(); 
             if (!isAlive) {
               console.info('WebSocket connection lost, attempting to reconnect...');
-              webSocketService.disconnect(); // *** Disconnect WebSocket / WebSocket 연결 해제 ***
-              webSocketService.connect(socketUrl); // *** Reconnect WebSocket / WebSocket 재연결 ***
+              // Disconnect WebSocket
+              webSocketService.disconnect(); 
+              // Reconnect WebSocket 
+              webSocketService.connect(socketUrl); 
             }
           }
-        }, 20000); // *** Set heartbeat interval to 20 seconds / 하트비트 간격 20초 설정 ***
+        // Set heartbeat interval to 20 seconds 
+        }, 20000); 
       } catch (error) {
-        console.error('Failed to initialize WebSocket:', error); // *** Log WebSocket initialization failure / WebSocket 초기화 실패 로그 ***
+        // Log WebSocket initialization failure 
+        console.error('Failed to initialize WebSocket:', error); 
       }
     };
 
     initializeSocket();
 
-    // *** Cleanup on component unmount / 컴포넌트 언마운트 시 정리 ***
+    // Cleanup on component unmount
     return () => {
       isUnmounted = true;
-      timerService.clear(); // *** Clear timer service / 타이머 서비스 초기화 ***
-      webSocketService.disconnect(); // *** Disconnect WebSocket / WebSocket 연결 해제 ***
+      // Clear timer service 
+      timerService.clear(); 
+      // Disconnect WebSocket 
+      webSocketService.disconnect(); 
     };
   }, []);
 
-  // *** Render Management Page Layout / 관리 페이지 레이아웃 렌더링 ***
+  // Render Management Page Layout 
   return (
     <Box sx={{ ...defaultContainerRowSx, width: s_full, height: '500px' }}>
       <Box sx={boxSx}>
-        <MenuRequestConetents /> {/* *** Menu Request Section / 메뉴 요청 섹션 *** */}
+        <MenuRequestConetents /> {/*   Menu Request Section   */}
       </Box>
       <Box sx={boxSx}>
-        <MenuResultPage /> {/* *** Menu Result Section / 메뉴 결과 섹션 *** */}
+        <MenuResultPage /> {/*   Menu Result Section   */}
       </Box>
     </Box>
   );

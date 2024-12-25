@@ -84,7 +84,7 @@ const staticHeaders = filterHeaders(apiBaseSetting.defaultHeaders);
 
 
 
-//*** */ Main API request function / 메인 API 요청 함수 ***
+//  */ Main API request function / 메인 API 요청 함수  
 export async function apiRequest<T>(
   requestType: ApiRequestType,
   requestBody?: ApiRequestTypeBodyModel,

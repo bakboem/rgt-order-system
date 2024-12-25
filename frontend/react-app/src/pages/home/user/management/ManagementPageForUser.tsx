@@ -12,7 +12,7 @@ import { isActiveUser } from "../../../../utils/tokenUtils";
 const ManagementPageForUser: React.FC = () => {
   const { menus, requestMenuAllForUser } = useRequestMenuList();
   
-  // ***INIT***
+  //  INIT 
   useEffect(() => {
     if (isActiveUser()) {
       requestMenuAllForUser();

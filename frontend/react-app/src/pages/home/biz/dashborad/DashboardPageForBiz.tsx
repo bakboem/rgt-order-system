@@ -51,7 +51,7 @@ const DashboardPageForBiz: React.FC = () => {
     }
   };
  
-  // ***INIT***
+  //  INIT 
   useEffect(() => {
     let isUnmounted = false;
     const initializeSocket = async () => {

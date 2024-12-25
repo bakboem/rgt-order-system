@@ -39,7 +39,7 @@ const MenuRequestConetents: React.FC = () => {
   const {requestMenu} = useRequestBizMenu();
   const {getBizMenu} = useGetBizMenuList();
   const navigate = useNavigate();
-  // ***INIT***
+  //  INIT 
   useEffect(() => {
     if (!isActiveBiz()) {
       navigate(login_route_name_for_user);
