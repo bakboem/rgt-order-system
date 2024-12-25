@@ -55,7 +55,7 @@ const DashboardPageForUser: React.FC = () => {
           if (!isUnmounted) {
             const isAlive = await webSocketService.checkAlive();
             if (!isAlive) {
-              console.warn(
+              console.info(
                 'WebSocket connection lost, attempting to reconnect...',
               );
               webSocketService.disconnect();

@@ -64,7 +64,7 @@ const ManagementPageForBiz: React.FC = () => {
           if (!isUnmounted) {
             const isAlive = await webSocketService.checkAlive(); // *** Check WebSocket connection health / WebSocket 연결 상태 확인 ***
             if (!isAlive) {
-              console.warn('WebSocket connection lost, attempting to reconnect...');
+              console.info('WebSocket connection lost, attempting to reconnect...');
               webSocketService.disconnect(); // *** Disconnect WebSocket / WebSocket 연결 해제 ***
               webSocketService.connect(socketUrl); // *** Reconnect WebSocket / WebSocket 재연결 ***
             }

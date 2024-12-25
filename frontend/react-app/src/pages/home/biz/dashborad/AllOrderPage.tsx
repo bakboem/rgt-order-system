@@ -30,7 +30,6 @@ const AllOrderPage: React.FC = () => {
   
     useEffect(() => {
       let isUnmounted = false;
-      console.warn("updated add order!!!")
       if (!isUnmounted) {
       }
       return () => {

@@ -14,7 +14,7 @@ class WebSocketService {
   // *** Registers a message handler for a specific type / 특정 유형에 대한 메시지 핸들러 등록 ***
   public registerHandler(type: string, handler: (data: any) => void): void {
     if (this.messageHandlers.has(type)) {
-      console.warn(`Handler for message type "${type}" is being overwritten.`);
+      console.info(`Handler for message type "${type}" is being overwritten.`);
     }
     this.messageHandlers.set(type, handler);
   }
@@ -24,14 +24,14 @@ class WebSocketService {
     if (this.messageHandlers.has(type)) {
       this.messageHandlers.delete(type);
     } else {
-      console.warn(`No handler found for message type "${type}" to unregister.`);
+      console.info(`No handler found for message type "${type}" to unregister.`);
     }
   }
 
   // *** Establishes a WebSocket connection / WebSocket 연결 설정 ***
   public connect(url: string): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      console.warn("WebSocket is already connected.");
+      console.info("WebSocket is already connected.");
       return;
     }
 
@@ -101,7 +101,7 @@ class WebSocketService {
   // *** Handles reconnection with exponential backoff / 지수적 백오프를 사용한 재연결 처리 ***
   private async reconnect(url: string): Promise<void> {
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-    console.warn(`Reconnecting in ${delay / 1000} seconds...`);
+    console.info(`Reconnecting in ${delay / 1000} seconds...`);
     await new Promise((resolve) => setTimeout(resolve, delay));
     this.reconnectAttempts++;
     this.createConnection(url);
@@ -116,7 +116,7 @@ class WebSocketService {
     this.heartbeatInterval = setInterval(async () => {
       const isAlive = await this.checkAlive();
       if (!isAlive) {
-        console.warn("WebSocket connection lost, attempting to reconnect...");
+        console.info("WebSocket connection lost, attempting to reconnect...");
         this.disconnect(); // *** Disconnects the current WebSocket / 현재 WebSocket 연결 해제 ***
         await this.reconnect(url); // *** Attempts to reconnect / 재연결 시도 ***
       } else {
