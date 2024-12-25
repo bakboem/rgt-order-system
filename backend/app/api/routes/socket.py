@@ -6,6 +6,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+
 @router.websocket("/user/{user_id}")
 async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):
     await websocket_service.connect_user(websocket, user_id)

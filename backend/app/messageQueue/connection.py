@@ -11,7 +11,7 @@ class RabbitMQConnection:
         if RabbitMQConnection._connection is None or RabbitMQConnection._connection.is_closed:
             RabbitMQConnection._connection = await aio_pika.connect_robust(
                 url,
-                heartbeat=60, 
+                heartbeat=120, 
                 client_properties={
                     "connection_name": "aio-pika-client"
                 }
