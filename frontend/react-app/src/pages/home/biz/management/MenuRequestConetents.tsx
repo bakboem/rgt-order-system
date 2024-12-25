@@ -36,7 +36,7 @@ const MenuRequestConetents: React.FC = () => {
     alignItems: as_center,
   };
 
-  const requestBizMenu = useRequestBizMenu();
+  const {requestMenu} = useRequestBizMenu();
   const {getBizMenu} = useGetBizMenuList();
   const navigate = useNavigate();
   // ***INIT***
@@ -44,6 +44,7 @@ const MenuRequestConetents: React.FC = () => {
     if (!isActiveBiz()) {
       navigate(login_route_name_for_user);
     } else {
+      console.warn("request Menu!!!!")
       getBizMenu();
     }
   }, []);
@@ -77,7 +78,7 @@ const MenuRequestConetents: React.FC = () => {
       stock: parseInt(instock),
       image_url: '',
     };
-    await requestBizMenu.requestMenu(requestModel, () => {
+    await requestMenu(requestModel, () => {
       showSuccessToast(successCreateMenuStr);
       setManuName('');
       setPrice('');

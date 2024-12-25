@@ -20,11 +20,6 @@ export const userOrderListState = atom<OrderResponseModel[]>({
   default: [],
 });
 
-export const bizOrderListState = atom<OrderResponseModel[]>({
-  key: "bizOrderListState", // unique ID
-  default: [],
-});
-
 
 export const tableRowAtomFamily = atomFamily<OrderResponseModel, string>({
   key: "tableRowAtomFamily",

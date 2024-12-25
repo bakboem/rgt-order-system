@@ -67,9 +67,7 @@ const OrderTableRow: React.FC<TableRowProps> = React.memo(
                 }}
                 onClick={async () => {
                     try {
-                      deleteMenuFunc(menu.id,()=>{
-                        // showSuccessToast('메뉴가 삭제됐습니다.');
-                      })
+                      deleteMenuFunc(menu.id)
                     } catch (error) {
                       
                     }

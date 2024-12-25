@@ -11,7 +11,6 @@ import {
   useRequestOrderList,
 } from '../../../../state/homePageState/hooks';
 import { generateDefaultOrder } from '../../../../utils/generatorUtils';
-import { data } from 'react-router-dom';
 
 const DashboardPageForUser: React.FC = () => {
   const { orders, requestOrder } = useRequestOrderList();

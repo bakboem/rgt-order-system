@@ -18,7 +18,7 @@ import {
 import OrderTableRow from '../../components/OrderTableRow';
 import { s_full } from '../../../../style/size';
 import { as_center, as_start } from '../../../../style/align';
-import { useRequestBizOrderList } from '../../../../state/homePageState/hooks';
+import { useRequestBizOrderList } from '../../../../state/bizPageState/hooks';
 
 const AllOrderPage: React.FC = () => {
   const menuNameStr = '메뉴명';

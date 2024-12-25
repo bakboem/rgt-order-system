@@ -84,6 +84,38 @@ export class MenuResponseModel {
   }
 }
 
+export class MenuDeleteModel {
+  menu_id: string;
+  biz_id:string;
+
+  constructor(
+    menu_id: string,
+    biz_id: string,
+    
+  ) {
+    this.menu_id = menu_id;
+    this.biz_id = biz_id;
+  }
+}
+
+
+export class OrderUpdateModel {
+  order_id: string;
+  state: string;
+  biz_id: string;
+
+  constructor(
+    order_id: string,
+    state: string,
+    biz_id:string
+    
+  ) {
+    this.order_id = order_id;
+    this.biz_id = biz_id;
+    this.state = state
+  }
+}
+
 export class OrderResponseModel {
   id: string;
   state: string;

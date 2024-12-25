@@ -3,13 +3,11 @@ import { CommonResponseModel, MenuRequestModel, MenuResponseModel, MenuUpdateMod
 import { apiRequest } from "../../services/apiService";
 import { ApiRequestType } from "../../enums/apiRequestType";
 import { useRecoilState } from "recoil";
-import { bizOrderListState, homeMenuListState, userOrderListState } from "./atoms";
 import { plainToInstance } from "class-transformer";
 import { useRef } from "react";
 import { ApiRequestTypeBodyModel } from "../../models/apiRequestBodyModels";
 import { CreateOrderModel } from "../../models/requestModels";
-import { bizMenuListState } from "../bizPageState/atoms";
-import { showSuccessToast } from "../../utils/toastUtil";
+import { homeMenuListState, userOrderListState } from "./atoms";
 
 
 export function useRequestMenuList() {
@@ -75,36 +73,6 @@ export function useCreateOrder() {
 
 
 
-export function useAddUserOrderState() {
-  const addOrderState = (updateOrder: OrderResponseModel) => {
-  };
-  return addOrderState;
-}
-
-export function useDeleteOrderState() {
-  const deleteOrderState = (updateOrder: OrderResponseModel) => {
-  };
-  return deleteOrderState;
-}
-
-export function useAddMenuState() {
-  const addMenuState = (updateOrder: OrderResponseModel) => {
-  };
-  return addMenuState;
-}
-
-export function useUpdateMenuState() {
-  const updateMenuState = (updateOrder: OrderResponseModel) => {
-  };
-  return updateMenuState;
-}
-
-export function useADeleteMenuState() {
-  const deleteMenuState = (updateOrder: OrderResponseModel) => {
-  };
-  return deleteMenuState;
-}
-
 
 
 export function useUpdateUserOrderState() {
@@ -129,62 +97,6 @@ export function useUpdateUserOrderState() {
 }
 
 
-export function useDeleteBizMenuState() {
-  const [orders, setMenuList] = useRecoilState(bizMenuListState);
-
-  const deleteMenuState = (updateMenu: MenuUpdateModel) => {
-    if (updateMenu.menu_id && updateMenu.biz_id) {
-      const updatedOrders = orders.filter(
-        (menu) =>
-          menu.id !== updateMenu.menu_id
-
-      );
-      setMenuList(updatedOrders);
-      showSuccessToast('메뉴가 삭제됐습니다.')
-    }
-  };
-
-  return deleteMenuState;
-}
-
-
-
-export function useUpdateBizOrderState() {
-  const [orders, setOrderList] = useRecoilState(bizOrderListState);
-
-  const updateOrderStateForBiz = (updateOrder: OrderResponseModel) => {
-    setOrderList((prevOrders) => {
-      const orderIndex = prevOrders.findIndex((order) => order.id === updateOrder.id);
-      if (orderIndex !== -1) {
-        const updatedOrders = [...prevOrders];
-        updatedOrders[orderIndex] = { ...prevOrders[orderIndex], state: updateOrder.state };
-        return updatedOrders;
-      } else {
-        return [...prevOrders, updateOrder];
-      }
-    });
-  };
-  return updateOrderStateForBiz;
-}
-
-
-
-export function useAddBizOrderState() {
-  const [orders, setOrderList] = useRecoilState(bizOrderListState);
-
-  const addOrderStateForBiz = (addOrder: OrderResponseModel) => {
-    setOrderList((prevOrders) => {
-      if (prevOrders.some(order => order.id === addOrder.id)) {
-        return prevOrders; 
-      }
-      console.log("the order added !!!");
-     showSuccessToast("새로운 오더가 추가됐습니다.")
-      return [addOrder,...prevOrders];
-     
-    });
-  };
-  return addOrderStateForBiz;
-}
 
 
 export function useRequestOrderList() {
@@ -214,33 +126,5 @@ export function useRequestOrderList() {
   return {orders, requestOrder };
 }
 
-
-
-export function useRequestBizOrderList() {
-  const [orders, setOrderList] = useRecoilState(bizOrderListState);
-  const isFetching = useRef(false);
-  const requestBizOrder= async () => {
-      if (isFetching.current) return; // 防止重复请求
-      isFetching.current = true;
-    try {
-      const response = await apiRequest<OrderResponseModel[]>(
-        ApiRequestType.ORDER_ALL_FOR_BIZ,
-      );
-
-      if (response) {
-          console.log(response);
-          const result = plainToInstance(OrderResponseModel, response);
-          setOrderList([...result]);
-      }
-
-      // 将转换后的实例列表赋值给 patients
-    } catch (error) {
-      console.error("Failed to fetch Menu:", error);
-    }finally {
-      isFetching.current = false;
-    }
-  };
-  return {orders, requestBizOrder };
-}
 
 

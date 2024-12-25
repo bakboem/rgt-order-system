@@ -5,13 +5,9 @@ import React, { useEffect } from 'react';
 import timerService from '../../../../services/timerService';
 import SocketUtils from '../../../../utils/socketUtil';
 import webSocketService from '../../../../services/webSocketService';
-import {
-  useAddBizOrderState,
-  useRequestBizOrderList,
-  useUpdateBizOrderState,
-} from '../../../../state/homePageState/hooks';
 import { generateDefaultOrder } from '../../../../utils/generatorUtils';
 import AllOrderPage from './AllOrderPage';
+import { useUpdateBizOrderState, useRequestBizOrderList, useAddBizOrderState } from '../../../../state/bizPageState/hooks';
 
 const DashboardPageForBiz: React.FC = () => {
   const eventNames = {

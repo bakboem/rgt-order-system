@@ -19,14 +19,3 @@ export function generateDefaultOrder(params: {
   };
   return model;
 }
-
-export function generateDefaultMenu(params: {
-  menu_id: string;
-  biz_id: string;
-}) {
-  const model = {
-    menu_id: params.menu_id,
-    biz_id: params.biz_id,
-  };
-  return model;
-}
