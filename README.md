@@ -12,7 +12,7 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 ## Project Details
 
 ### Stack
-*** React / Python FastApi / Dokcer / RabbitMQ / WebSocket / RESTful API ***
+*** React / Python FastApi / Dokcer / PostgreSQL / RabbitMQ / WebSocket / RESTful API ***
 
 ### Account Information
 - **User Accounts:** ID and password are the same for each account:
