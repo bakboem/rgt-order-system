@@ -11,9 +11,8 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 
 ## Project Details
 
-### Switching from Development to Production
-- Search for `#CHANGE` throughout the project.
-- Uncomment the relevant sections in the identified files as needed.
+### Stack
+*** React / Python FastApi / Dokcer / RabbitMQ / WebSocket / RESTful API ***
 
 ### Account Information
 - **User Accounts:** ID and password are the same for each account:
