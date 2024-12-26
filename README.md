@@ -2,6 +2,8 @@
 
 This repository is a skill assessment project for a pre-interview evaluation with RGT Company in Korea.
 
+## Time Taken
+- 4 Day
 ## Video Demonstration
 [YouTube Video](https://youtu.be/tzzhALrxtS4)
 
