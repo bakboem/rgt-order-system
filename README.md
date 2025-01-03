@@ -102,7 +102,6 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 ```bash
 git clone https://github.com/bakboem/rgt-order-system.git
 cd rgt-order-system
-export CURRENT_PATH=$PWD
 ```
 
 #### Start PostgreSQL and RabbitMQ
@@ -110,9 +109,9 @@ export CURRENT_PATH=$PWD
 docker-compose -f ./docker-compose-dev.yml up --build -d
 ```
 
-#### Backend
+#### Backend 
+- open a shell 
 ```bash
-
 cd backend
 poetry install --no-root
 poetry shell
@@ -123,8 +122,9 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### Frontend
+- open a shell
 ```bash
-cd $CURRENT_PATH/frontend/react-app
+cd rgt-order-system/frontend/react-app
 yarn install
 ```
 ```
