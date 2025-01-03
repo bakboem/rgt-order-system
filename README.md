@@ -88,7 +88,7 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 ---
 
 ## Environment Setup
-
+- Node 22+
 ### Prerequisites
 - Install **Docker** and **Node.js**.
 - Install Poetry:
@@ -102,6 +102,7 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 ```bash
 git clone https://github.com/bakboem/rgt-order-system.git
 cd rgt-order-system
+export CURRENT_PATH=$PWD
 ```
 
 #### Start PostgreSQL and RabbitMQ
@@ -111,16 +112,22 @@ docker-compose -f ./docker-compose-dev.yml up --build -d
 
 #### Backend
 ```bash
+
 cd backend
 poetry install --no-root
 poetry shell
+```
+
+```
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### Frontend
 ```bash
-cd frontend/react-app
+cd $CURRENT_PATH/frontend/react-app
+yarn install
+```
+```
 yarn start
 ```
-
 #### HAPPY HACKING!~
