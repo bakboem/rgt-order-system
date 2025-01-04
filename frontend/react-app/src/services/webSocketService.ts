@@ -122,7 +122,7 @@ class WebSocketService {
       } else {
         this.reconnectAttempts = 0;
       }
-    }, 10000);
+    }, 20000);
   }
 
   // Sends a message through the WebSocket connection 
@@ -143,7 +143,7 @@ class WebSocketService {
         this.sendMessage("ping");
         setTimeout(() => {
           resolve(this.lastResponse);
-        }, 1000);
+        }, 2000);
       } else {
         resolve(false);
       }
