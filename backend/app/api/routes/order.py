@@ -1,5 +1,7 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import desc, select
+from app.core.config import ROUTING_KEY
 from app.db.session import async_session
 from app.models.models import Menu, Order,Instock
 from app.schemas.schemas import  OrderCreate,OrderResponse,OrderUpdate,MenuResponse, BizToken,UserToken, WebSocketMessage
@@ -9,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from app.messageQueue.producer import rabbitmq_producer
 router = APIRouter()
-
+logger = logging.getLogger("RGT-Order-System")
 async def get_db():
     async with async_session() as db:
         yield db
@@ -220,9 +222,10 @@ async def update_order_status(
         }
 
         await rabbitmq_producer.publish_message(
-            routing_key="orders",
+            routing_key=ROUTING_KEY,
             message=message
         )
+        logger.warning("Order Added:  ${message}")
 
     return order_response
 
@@ -273,7 +276,7 @@ async def delete_order(order_id: UUID, db: AsyncSession = Depends(get_db)):
 
     # 通过 RabbitMQ 广播消息
     await rabbitmq_producer.publish_message(
-        routing_key="orders",
+        routing_key=ROUTING_KEY,
         message=message
     )
 

@@ -65,6 +65,7 @@ const DashboardPageForUser: React.FC<DashboardPageForUserProp> = (data) => {
       // timerService.clear();
       data.webSocketService.disconnect();
       data.webSocketService.unregisterHandler(orderUpdate);
+
     };
   }, []);
   return <TableComponent></TableComponent>;

@@ -2,7 +2,7 @@ import aio_pika
 import logging
 import json
 import uuid  
-from app.core.config import QUEUE_URL
+from app.core.config import ORDER_EXCHANGE, QUEUE_URL
 from app.messageQueue.connection import RabbitMQConnection
 
 logger = logging.getLogger("RabbitMQProducer")
@@ -16,7 +16,7 @@ class RabbitMQProducer:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, exchange_name: str = "orders_exchange",queue_url: str = QUEUE_URL):
+    def __init__(self, exchange_name: str = ORDER_EXCHANGE,queue_url: str = QUEUE_URL):
         if not hasattr(self, "_initialized"):
             self.exchange_name = exchange_name
             self.queue_url = queue_url

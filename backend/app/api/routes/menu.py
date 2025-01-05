@@ -1,7 +1,9 @@
+import logging
 from operator import and_
 from fastapi import APIRouter, Depends, HTTPException,Body
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import ROUTING_KEY
 from app.db.session import async_session
 from app.models.models import Instock, Menu,Order,SaleTracking
 from app.schemas.schemas import MenuCreate,BizToken,InstockUpdate, MenuResponse, MenuUpdate,MenuWithStock,StockUpdateRequest
@@ -12,7 +14,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import joinedload
 from app.messageQueue.producer import rabbitmq_producer
 router = APIRouter()
-
+logger = logging.getLogger("RGT-Order-System")
 async def get_db():
     async with async_session() as db:
         yield db
@@ -91,7 +93,7 @@ async def add_menu(menu: MenuCreate, db: AsyncSession = Depends(get_db), current
     # 事务外发布消息
     try:
         await rabbitmq_producer.publish_message(
-            routing_key="orders",
+            routing_key=ROUTING_KEY,
             message=message
         )
     except Exception as e:
@@ -136,7 +138,7 @@ async def update_menu(menu_id: UUID, menu: MenuUpdate, db: AsyncSession = Depend
         ]
     }
     await rabbitmq_producer.publish_message(
-        routing_key="orders",
+        routing_key=ROUTING_KEY,
         message=message
     )
     return existing_menu
@@ -180,7 +182,7 @@ async def update_stock(
         ]
     }
     await rabbitmq_producer.publish_message(
-        routing_key="orders",
+        routing_key=ROUTING_KEY,
         message=message
     )
     return instock

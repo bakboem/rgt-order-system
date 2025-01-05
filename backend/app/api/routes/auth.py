@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.future import select
 from app.dependencies import get_current_biz_user, get_current_user
@@ -8,7 +9,7 @@ from datetime import timedelta
 from app.db.session import async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
-
+logger = logging.getLogger("RGT-Order-System")
 async def get_db():
 
     async with async_session() as db:

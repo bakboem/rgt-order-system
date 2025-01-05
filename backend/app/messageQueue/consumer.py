@@ -24,6 +24,7 @@ class RabbitMQConsumer:
                 async for message in queue_iter:
                     logger.warning("Queue iterator active.")
                     logger.warning("Message Queue {message}.")
+                    logger.warning(f"Message received: {message.body.decode()}")
                     task = asyncio.create_task(self.process_message(message))
                     self.tasks.add(task)
                     task.add_done_callback(self._on_task_done)
@@ -52,6 +53,7 @@ class RabbitMQConsumer:
    
 
     async def process_message(self, message: IncomingMessage):
+        logger.warning(f"In ProcessMessage process")
         try:
             decoded_msg = message.body.decode() 
             logger.info(f"Decoded message: {decoded_msg}")
@@ -69,23 +71,23 @@ class RabbitMQConsumer:
                 if message_type == "order_update":
                     if user_id:
                         await self.websocket_service.broadcast_user_order_update(
-                            UUID(user_id), json.dumps(data)
+                            UUID(user_id), json.dumps(decoded_msg)
                         )
                     if biz_id:
                         await self.websocket_service.broadcast_biz_order_update(
-                            UUID(biz_id), json.dumps(data)
+                            UUID(biz_id), json.dumps(decoded_msg)
                         )
                 elif message_type in [
                     "order_add", "menu_update", "stock_update", "menu_add",
                     "menu_delete", "order_delete",
                 ] and biz_id:
                     await self.websocket_service.broadcast_biz_order_update(
-                        UUID(biz_id), json.dumps(data)
+                        UUID(biz_id), json.dumps(decoded_msg)
                     )
                     logger.info(f"Call broadcast_biz_order_update successful: {message_type} - {item}")
                 else:
                     logger.warning(f"Unknown or incomplete message: {message_type} - {item}")
-
+            await message.ack()
         except Exception as e:
             logger.error(f"Error processing message: {e}")
             await message.nack(requeue=False)

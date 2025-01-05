@@ -64,10 +64,6 @@ class WebSocketService {
       if (this.socket === newSocket) {
         this.socket = null;
       }
-      console.info("Attempting to reconnect...");
-        this.reconnect(url).catch((error) => {
-            console.error("Reconnect failed:", error);
-        });
     };
 
     newSocket.onerror = (error) => {
@@ -225,7 +221,7 @@ class WebSocketService {
   }
 
   // Disconnects the WebSocket and clears the heartbeat interval 
-  public disconnect(): void {
+  public disconnect(isRetry=true): void {
     if (this.isDisconnecting) return;
     if (this.heartbeatInterval) {
         clearInterval(this.heartbeatInterval);
@@ -246,6 +242,7 @@ class WebSocketService {
     this.messageQueue = []; // 清空消息队列
     this.isProcessingQueue = false; // 重置队列处理状态
     this.isDisconnecting = false;
+    this.reconnectAttempts = 0;
 }
 
 }

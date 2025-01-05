@@ -6,7 +6,6 @@ from  app.global_services import websocket_service
 logger = logging.getLogger("RGT-Order-System")
 router = APIRouter()
 
-
 @router.websocket("/user/{user_id}")
 async def websocket_user_endpoint(websocket: WebSocket, user_id: UUID):
     await websocket_service.connect_user(websocket, user_id)

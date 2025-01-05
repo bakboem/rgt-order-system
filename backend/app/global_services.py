@@ -1,4 +1,4 @@
-from app.core.config import REDIS_PASSWORD, REDIS_URL
+from app.core.config import ORDER_QUEUE_NAME, QUEUE_URL, REDIS_PASSWORD, REDIS_URL
 from app.messageQueue.consumer import RabbitMQConsumer
 from app.messageQueue.producer import RabbitMQProducer
 from app.services.redis_service import RedisService
@@ -12,4 +12,4 @@ websocket_service = WebSocketService(redis_service=redis_service)
 redis_processor = RedisMessageProcessor(redis_service=redis_service, websocket_service=websocket_service)
 monitoring = ConnectionMonitorService(websocket_service=websocket_service)
 rabbitmq_consumer = RabbitMQConsumer(websocket_service)
-producer = RabbitMQProducer()
+producer = RabbitMQProducer(exchange_name=ORDER_QUEUE_NAME,queue_url=QUEUE_URL)

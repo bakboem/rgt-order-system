@@ -5,7 +5,13 @@ DATABASE_URL = "postgresql+asyncpg://rgt-user:RGT12345!@localhost:5432/rgt"
 QUEUE_URL = "amqp://guest:guest@localhost/"
 REDIS_URL = "redis://localhost:6379/0" 
 REDIS_PASSWORD = "rgt12345!"
+# Rabbit Queue Name
 ORDER_QUEUE_NAME="orders_queue"
+# Rabbit Exchange Name
+ORDER_EXCHANGE ="orders_exchange"
+# Routing Key
+ROUTING_KEY = "orders"
+
 # CHANGE
 # 배포
 # by docker-compose 
