@@ -12,6 +12,7 @@ class WebSocketService {
   // Tracks if message queue is being processed 
   private isProcessingQueue: boolean = false; 
   private isDisconnecting: boolean = false; 
+  private isLivePage: boolean = false; 
   // interval
   private readonly HEARTBEAT_INTERVAL: number = 30000;
 
@@ -29,7 +30,12 @@ class WebSocketService {
     }
     this.messageHandlers.set(type, handler);
   }
-
+  /**
+   * setIsLivePageState
+   */
+  public setIsLivePageState(state:boolean) {
+    this.isLivePage = state
+  }
   // Unregisters a message handler for a specific type 
   public unregisterHandler(type: string): void {
     if (this.messageHandlers.has(type)) {
@@ -64,6 +70,11 @@ class WebSocketService {
       if (this.socket === newSocket) {
         this.socket = null;
       }
+      console.info("Attempting to reconnect...");
+      this.reconnect(url).catch((error) => {
+          console.error("Reconnect failed:", error);
+      });
+    
     };
 
     newSocket.onerror = (error) => {
@@ -123,6 +134,7 @@ class WebSocketService {
 
   // Handles reconnection with exponential backoff 
   private async reconnect(url: string): Promise<void> {
+    if (this.isLivePage) return;
     if (this.reconnectAttempts >= this.MAX_RECONNECT_ATTEMPTS) {
         console.error("Maximum reconnect attempts reached. Stopping reconnection attempts.");
         return; // 停止重试

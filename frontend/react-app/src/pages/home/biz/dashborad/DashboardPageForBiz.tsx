@@ -59,12 +59,28 @@ const DashboardPageForBiz: React.FC<DashboardPageForBizProps> = (data) => {
   useEffect(() => {
     let isUnmounted = false;
     // handle Tab visibility
+    const handleVisible = () => {
+      data.webSocketservice.setIsLivePageState(false);
+      console.warn("Page is visible");
+    }
+    const handleHidden = () => {
+      data.webSocketservice.setIsLivePageState(true);
+      console.warn("Page is hidden");
+    }
+    const handleUserActive = () => {
+      data.webSocketservice.setIsLivePageState(false);
+      console.log("User is active")
+    }
+    const handleUserInactive = () => {
+      data.webSocketservice.setIsLivePageState(true);
+      console.log("User is inactive");
+
+    }
     const visibilityManager = new TabVisibilityService(
-      () => console.log("Tab is visible"),
-      () => {
-        // webSocketService.disconnect();
-        console.warn("User has left, disconnected web socket");
-      }
+      handleVisible ,
+      handleHidden,
+      handleUserActive,
+      handleUserInactive
     );
     visibilityManager.register();
 

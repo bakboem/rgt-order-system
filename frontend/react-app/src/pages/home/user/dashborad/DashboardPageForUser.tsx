@@ -11,6 +11,7 @@ import {
 } from '../../../../state/homePageState/hooks';
 import { generateDefaultOrder } from '../../../../utils/generatorUtils';
 import WebSocketService from '../../../../services/webSocketService';
+import TabVisibilityService from '../../../../services/tabVisibilityService';
 
 interface DashboardPageForUserProp {
   webSocketService: WebSocketService;
@@ -47,6 +48,30 @@ const DashboardPageForUser: React.FC<DashboardPageForUserProp> = (data) => {
   //  INIT 
   useEffect(() => {
     let isUnmounted = false;
+    const handleVisible = () => {
+      data.webSocketService.setIsLivePageState(false);
+      console.warn("Page is visible");
+    }
+    const handleHidden = () => {
+      data.webSocketService.setIsLivePageState(true);
+      console.warn("Page is hidden");
+    }
+    const handleUserActive = () => {
+      data.webSocketService.setIsLivePageState(false);
+      console.log("User is active")
+    }
+    const handleUserInactive = () => {
+      data.webSocketService.setIsLivePageState(true);
+      console.log("User is inactive");
+
+    }
+    const visibilityManager = new TabVisibilityService(
+      handleVisible ,
+      handleHidden,
+      handleUserActive,
+      handleUserInactive
+    );
+    visibilityManager.register();
     const initializeSocket = async () => {
       try {
         const socketUrl = await SocketUtils.getSocketUrl();
@@ -65,7 +90,7 @@ const DashboardPageForUser: React.FC<DashboardPageForUserProp> = (data) => {
       // timerService.clear();
       data.webSocketService.disconnect();
       data.webSocketService.unregisterHandler(orderUpdate);
-
+      visibilityManager.unregister();
     };
   }, []);
   return <TableComponent></TableComponent>;

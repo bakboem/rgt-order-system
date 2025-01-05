@@ -2,6 +2,7 @@
 
 This repository is a skill assessment project for a pre-interview evaluation with RGT Company in Korea.
 
+
 ## The project took 4 Day.
 
 ## Video Demonstration
@@ -20,14 +21,35 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 - **WebSocket**
 - **RESTful API**
   
+## Features
+- ### ***Real-Time WebSocket Communication***
+  - Supports bi-directional WebSocket communication for user and business updates.
+  - Efficient handling of multiple active connections with user and business segregation.
+- ### ***Heartbeat Monitoring***
+  - Server performs passive heartbeat checks every 30 seconds.
+  - Clients proactively initiate heartbeat checks if no server heartbeat is received within 30 seconds.
+  - Automatically disconnects inactive WebSocket connections.
+- ### ***Connection Monitoring***
+  - Periodically monitors active connections
+  - Dynamically adjusts monitoring intervals based on the number of active connections.
+  - Detects and handles inactive connections by disconnecting them
+- ### ***Redis Message Queue***
+  - Stores failed messages in Redis for later retry.
+  - Implements a retry mechanism with a configurable maximum retry count.
+  - Supports dead-letter queue for messages that exceed retry limits
+- ### ***Order Update Broadcasting***
+  - Broadcasts order updates to specific users or businesses via WebSocket
+  - Handles user-specific and business-specific message routing
+  - Saves failed messages for retry in case of connection issues
 
-### Account Information
+
+### ***Account Information***
 - **User Accounts:** ID and password are the same for each account:
   - `rgt1` and `rgt2`
 - **Business Accounts:** ID and password are the same for each account:
   - `biz1` and `biz2`
 
-### Frontend Overview
+### ***Frontend Overview***
 
 #### User Roles
 - **`user`**: General account users.
@@ -65,7 +87,7 @@ This repository is a skill assessment project for a pre-interview evaluation wit
 
 ---
 
-### Backend Overview
+### ***Backend Overview***
 
 #### JWT
 - JWT expiration time is 15 minutes.
