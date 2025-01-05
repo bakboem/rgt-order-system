@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgresql-data:/var/lib/postgresql/data
+      - rgt-postgresql-data-dev:/var/lib/postgresql/data
     env_file:
       - ./backend/db/.env
     healthcheck:
@@ -15,6 +15,8 @@ services:
       timeout: 5s
       retries: 5
     restart: always
+    networks: 
+      - rgt-network
 
   ### RabbitMQ ###
   rabbitmq:
@@ -26,16 +28,33 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - rgt-rabbitmq-data-dev:/var/lib/rabbitmq
       - ./backend/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "rabbitmqctl status"]
       interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: 
+      - rgt-network
+  ### Redis ###
+  redis:
+    build: ./backend/redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - rgt-redis-data-dev:/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
       timeout: 10s
-      retries: 12
-      start_period: 120s
-
+      retries: 3
+      start_period: 30s  #
+    networks: 
+      - rgt-network
   # ## Backend (FastAPI) ###
   # appserver:
   #   build:
@@ -74,7 +93,10 @@ services:
   #   environment:
   #     - CHOKIDAR_USEPOLLING=true
   #   restart: always
-
+networks:
+  rgt-network:
+    driver: bridge
 volumes:
-  postgresql-data:
-  rabbitmq-data:
+  rgt-postgresql-data-dev:
+  rgt-rabbitmq-data-dev:
+  rgt-redis-data-dev:

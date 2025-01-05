@@ -2,17 +2,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
-import timerService from '../../../../services/timerService';
+
 import SocketUtils from '../../../../utils/socketUtil';
 import TableComponent from '../../components/TableComponent';
-import webSocketService from '../../../../services/webSocketService';
 import {
   useUpdateUserOrderState,
   useRequestOrderList,
 } from '../../../../state/homePageState/hooks';
 import { generateDefaultOrder } from '../../../../utils/generatorUtils';
+import WebSocketService from '../../../../services/webSocketService';
 
-const DashboardPageForUser: React.FC = () => {
+interface DashboardPageForUserProp {
+  webSocketService: WebSocketService;
+}
+const DashboardPageForUser: React.FC<DashboardPageForUserProp> = (data) => {
   const { orders, requestOrder } = useRequestOrderList();
 
   const eventNames = {
@@ -47,21 +50,10 @@ const DashboardPageForUser: React.FC = () => {
     const initializeSocket = async () => {
       try {
         const socketUrl = await SocketUtils.getSocketUrl();
-        webSocketService.connect(socketUrl);
-        webSocketService.registerHandler(orderUpdate, orderUpdateHandle);
+        data.webSocketService.connect(socketUrl);
+        data.webSocketService.registerHandler(orderUpdate, orderUpdateHandle);
 
-        timerService.start(async () => {
-          if (!isUnmounted) {
-            const isAlive = await webSocketService.checkAlive();
-            if (!isAlive) {
-              console.info(
-                'WebSocket connection lost, attempting to reconnect...',
-              );
-              webSocketService.disconnect();
-              webSocketService.connect(socketUrl);
-            }
-          }
-        }, 20000);
+      
       } catch (error) {
         console.error('Failed to initialize WebSocket:', error);
       }
@@ -70,9 +62,9 @@ const DashboardPageForUser: React.FC = () => {
     requestOrder();
     return () => {
       isUnmounted = true;
-      timerService.clear();
-      webSocketService.disconnect();
-      webSocketService.unregisterHandler(orderUpdate);
+      // timerService.clear();
+      data.webSocketService.disconnect();
+      data.webSocketService.unregisterHandler(orderUpdate);
     };
   }, []);
   return <TableComponent></TableComponent>;

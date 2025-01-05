@@ -69,6 +69,8 @@ uvloop = "0.21.0"
 watchfiles = "1.0.3"
 websockets = "14.1"
 yarl = "1.18.3"
+colorlog = "^6.9.0"
+redis = "^5.2.1"
 
 
 [build-system]

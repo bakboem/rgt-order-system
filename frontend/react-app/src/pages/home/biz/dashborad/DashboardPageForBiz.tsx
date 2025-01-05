@@ -2,20 +2,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable array-callback-return */
 import React, { useEffect } from 'react';
-import timerService from '../../../../services/timerService';
 import SocketUtils from '../../../../utils/socketUtil';
-import webSocketService from '../../../../services/webSocketService';
+
 import { generateDefaultOrder } from '../../../../utils/generatorUtils';
 import AllOrderPage from './AllOrderPage';
 import { useUpdateBizOrderState, useRequestBizOrderList, useAddBizOrderState } from '../../../../state/bizPageState/hooks';
+import TabVisibilityService from '../../../../services/tabVisibilityService';
+import WebSocketService from '../../../../services/webSocketService';
 
-const DashboardPageForBiz: React.FC = () => {
+interface DashboardPageForBizProps {
+  webSocketservice: WebSocketService;
+}
+const DashboardPageForBiz: React.FC<DashboardPageForBizProps> = (data) => {
+
   const eventNames = {
     orderUpdate: 'order_update',
     orderAdd:'order_add'
   };
   const { orderUpdate,orderAdd } = eventNames;
-
   const updateOrderStateForBiz = useUpdateBizOrderState();
       const { orders, requestBizOrder } = useRequestBizOrderList();
   const addOrderStateForBiz = useAddBizOrderState();
@@ -23,7 +27,7 @@ const DashboardPageForBiz: React.FC = () => {
     if (message.type === orderUpdate) {
       if (Array.isArray(message.data)) {
         message.data.map((obj: any) => {
-          if (obj?.order_id && obj?.state && obj?.biz_id) {
+          if (obj?.state && obj?.biz_id) {
             const model = generateDefaultOrder({
               order_id: obj.order_id,
               state: obj.state,
@@ -54,24 +58,24 @@ const DashboardPageForBiz: React.FC = () => {
   //  INIT 
   useEffect(() => {
     let isUnmounted = false;
+    // handle Tab visibility
+    const visibilityManager = new TabVisibilityService(
+      () => console.log("Tab is visible"),
+      () => {
+        // webSocketService.disconnect();
+        console.warn("User has left, disconnected web socket");
+      }
+    );
+    visibilityManager.register();
+
     const initializeSocket = async () => {
       try {
         const socketUrl = await SocketUtils.getSocketUrl();
-        webSocketService.connect(socketUrl);
-        webSocketService.registerHandler(orderUpdate, orderUpdateHandleForBiz);
-        webSocketService.registerHandler(orderAdd,orderAddHandleForBiz)
-        timerService.start(async () => {
-          if (!isUnmounted) {
-            const isAlive = await webSocketService.checkAlive();
-            if (!isAlive) {
-              console.info(
-                'WebSocket connection lost, attempting to reconnect...',
-              );
-              webSocketService.disconnect();
-              webSocketService.connect(socketUrl);
-            }
-          }
-        }, 20000);
+        console.warn(`"${socketUrl}"`)
+        data.webSocketservice.connect(socketUrl);
+        data.webSocketservice.registerHandler(orderUpdate, orderUpdateHandleForBiz);
+        data.webSocketservice.registerHandler(orderAdd,orderAddHandleForBiz)
+      
       } catch (error) {
         console.error('Failed to initialize WebSocket:', error);
       }
@@ -82,10 +86,11 @@ const DashboardPageForBiz: React.FC = () => {
     }
     return () => {
       isUnmounted = true;
-      timerService.clear();
-      webSocketService.disconnect();
-      webSocketService.unregisterHandler(orderUpdate);
-      webSocketService.unregisterHandler(orderAdd);
+      // timerService.clear();
+      data.webSocketservice.disconnect();
+      data.webSocketservice.unregisterHandler(orderUpdate);
+      data.webSocketservice.unregisterHandler(orderAdd);
+      visibilityManager.unregister();
     };
   }, []);
 

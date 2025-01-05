@@ -44,7 +44,7 @@ const MenuRequestConetents: React.FC = () => {
     if (!isActiveBiz()) {
       navigate(login_route_name_for_user);
     } else {
-      console.warn("request Menu!!!!")
+      console.info("request Menu!!!!")
       getBizMenu();
     }
   }, []);

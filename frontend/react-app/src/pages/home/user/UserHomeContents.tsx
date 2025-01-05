@@ -6,12 +6,12 @@ import { s_full } from "../../../style/size";
 import { defaultContainerColumnSx } from "../../../style/sx/containerSx";
 import ManagementPageForUser from "./management/ManagementPageForUser";
 import DashboardPageForUser from "./dashborad/DashboardPageForUser";
+import WebSocketService from "../../../services/webSocketService";
 
 
 
 const UserHomeContents: React.FC = () => {
   const [tabIndex] = useRecoilState(homeTabBarState);
-
   return (
     <Box
       sx={{
@@ -22,7 +22,7 @@ const UserHomeContents: React.FC = () => {
         justifyContent: as_start,
       }}
     >
-      {tabIndex === 0 ? <ManagementPageForUser /> : <DashboardPageForUser />}
+      {tabIndex === 0 ? <ManagementPageForUser /> : <DashboardPageForUser webSocketService={ new WebSocketService()}/>}
     </Box>
   );
 };

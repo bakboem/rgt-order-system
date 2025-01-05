@@ -14,7 +14,8 @@ class RabbitMQConnection:
                 heartbeat=120, 
                 client_properties={
                     "connection_name": "aio-pika-client"
-                }
+                },
+                publisher_confirms=True
             )
         return RabbitMQConnection._connection
 
@@ -23,4 +24,5 @@ class RabbitMQConnection:
         if RabbitMQConnection._channel is None or RabbitMQConnection._channel.is_closed:
             connection = await RabbitMQConnection.get_connection()
             RabbitMQConnection._channel = await connection.channel()
+            await RabbitMQConnection._channel.set_qos(prefetch_count=1) 
         return RabbitMQConnection._channel

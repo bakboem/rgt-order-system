@@ -6,6 +6,7 @@ import { s_full } from "../../../style/size";
 import { defaultContainerColumnSx } from "../../../style/sx/containerSx";
 import DashboardPageForBiz from "./dashborad/DashboardPageForBiz";
 import ManagementPageForBiz from "./management/ManagementPageForBiz";
+import WebSocketService from "../../../services/webSocketService";
 
 
 const BizHomeContents:React.FC = () => {
@@ -20,7 +21,7 @@ const BizHomeContents:React.FC = () => {
             justifyContent: as_start,
           }}
         >
-          {tabIndex === 0 ? <ManagementPageForBiz /> : <DashboardPageForBiz />}
+          {tabIndex === 0 ? <ManagementPageForBiz /> : <DashboardPageForBiz webSocketservice={new WebSocketService()}/>}
         </Box>
       );
 };

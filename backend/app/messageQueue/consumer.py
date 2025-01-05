@@ -6,14 +6,14 @@ from aio_pika import IncomingMessage
 from app.messageQueue.connection import RabbitMQConnection
 from app.services import socket_service
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("RGT-Order-System")
 
 class RabbitMQConsumer:
     def __init__(self, websocket_service: socket_service.WebSocketService):
         self.websocket_service = websocket_service
         self.tasks = set()  # 管理异步任务
 
-    async def start(self, queue_name: str, callback):
+    async def start(self, queue_name: str):
         """启动消费者"""
         try:
             logger.info(f"Starting consumer for queue: {queue_name}")
@@ -22,7 +22,9 @@ class RabbitMQConsumer:
 
             async with queue.iterator() as queue_iter:
                 async for message in queue_iter:
-                    task = asyncio.create_task(self._handle_message(message, callback))
+                    logger.warning("Queue iterator active.")
+                    logger.warning("Message Queue {message}.")
+                    task = asyncio.create_task(self.process_message(message))
                     self.tasks.add(task)
                     task.add_done_callback(self._on_task_done)
 
@@ -47,13 +49,7 @@ class RabbitMQConsumer:
         if task.exception():
             logger.error(f"Task raised an exception: {task.exception()}")
 
-    async def _handle_message(self, message: IncomingMessage, callback):
-        try:
-            async with message.process():
-                await callback(message)
-        except Exception as e:
-            logger.error(f"Error processing message: {e}")
-            await message.nack(requeue=False)
+   
 
     async def process_message(self, message: IncomingMessage):
         try:
@@ -92,3 +88,4 @@ class RabbitMQConsumer:
 
         except Exception as e:
             logger.error(f"Error processing message: {e}")
+            await message.nack(requeue=False)
