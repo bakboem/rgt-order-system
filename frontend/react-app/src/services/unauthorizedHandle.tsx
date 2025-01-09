@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { subscribe, unsubscribe } from "./emitServer";
+import { subscribe, unsubscribe } from "./emitService";
 import { entryPage } from "../config/statics";
 import { toast } from "react-toastify";
 

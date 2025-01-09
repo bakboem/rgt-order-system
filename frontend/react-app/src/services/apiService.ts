@@ -6,7 +6,7 @@ import 'reflect-metadata';
 import {  token_expired_event_name } from '../config/statics';
 import { ApiHooks } from '../models/apiHooks';
 import { getToken, isTokenValid } from '../utils/tokenUtils';
-import { emit,throttleEmit } from "./emitServer";
+import { emit,throttleEmit } from "./emitService";
 
 
 // Deserialize JSON to a class instance / JSON 데이터를 클래스 인스턴스로 변환
